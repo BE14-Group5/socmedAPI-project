@@ -22,6 +22,7 @@ func ToCore(data User) user.Core {
 		Email:           data.Email,
 		Name:            data.Name,
 		PhoneNumber:     data.PhoneNumber,
+		Password:        data.Password,
 		ProfilePhoto:    data.ProfilePhoto,
 		BackgroundPhoto: data.BackgroundPhoto,
 	}
@@ -33,6 +34,7 @@ func CoreToData(data user.Core) User {
 		Email:           data.Email,
 		Name:            data.Name,
 		PhoneNumber:     data.PhoneNumber,
+		Password:        data.Password,
 		ProfilePhoto:    data.ProfilePhoto,
 		BackgroundPhoto: data.BackgroundPhoto,
 	}
