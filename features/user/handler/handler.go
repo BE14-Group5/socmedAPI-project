@@ -1,7 +1,9 @@
 package handler
 
 import (
+	"net/http"
 	"simple-social-media-API/features/user"
+	"simple-social-media-API/helper"
 
 	"github.com/labstack/echo/v4"
 )
@@ -17,17 +19,51 @@ func New(srv user.UserService) user.UserHandler {
 }
 
 func (uc *userControl) Register() echo.HandlerFunc {
+	return func(c echo.Context) error {
+		input := RegisterRequest{}
+		if err := c.Bind(&input); err != nil {
+			return c.JSON(http.StatusBadRequest, "wrong input")
+		}
 
+		if file, err := c.FormFile("profile_photo"); err != nil {
+			return c.JSON(http.StatusBadRequest, "wrong image input")
+		} else {
+			dir, err := helper.UploadProfilePhoto(*file, input.Email)
+			if err != nil {
+				return c.JSON(http.StatusInternalServerError, "server problem")
+			}
+			input.ProfilePhoto = dir
+		}
+
+		if file, err := c.FormFile("background_photo"); err != nil {
+			return c.JSON(http.StatusBadRequest, "wrong image input")
+		} else {
+			dir, err := helper.UploadBackgroundPhoto(*file, input.Email)
+			if err != nil {
+				return c.JSON(http.StatusInternalServerError, "server problem")
+			}
+			input.ProfilePhoto = dir
+		}
+
+		res, err := uc.srv.Register(*ToCore(input))
+		if err != nil {
+			return c.JSON(http.StatusInternalServerError, "server problem")
+		}
+		return c.JSON(http.StatusCreated, map[string]interface{}{
+			"data":    res,
+			"message": "success register",
+		})
+	}
 }
 func (uc *userControl) Login() echo.HandlerFunc {
-
+	return nil
 }
 func (uc *userControl) Profile() echo.HandlerFunc {
-
+	return nil
 }
 func (uc *userControl) Deactive() echo.HandlerFunc {
-
+	return nil
 }
 func (uc *userControl) Update() echo.HandlerFunc {
-
+	return nil
 }
