@@ -1,0 +1,653 @@
+openapi: 3.0.3
+info:
+  title: SocMed App API
+  description: |-
+    Ini adalah dokumentasi API untuk aplikasi media sosial yang dibuat oleh Grup 5
+
+    Project 2, Unit 2
+  contact:
+    name: Putra
+    email: putra123@gmail.com
+  version: 1.0.0
+servers:
+  - url: webisteku.com
+    description: digunakan untuk ujicoba
+     
+tags:
+  - name: Users
+  - name: Posts
+  - name: Comments
+
+paths:
+  /registration:
+    post:
+      tags:
+        - "Users"
+      description: digunakan untuk mendaftarkan pengguna baru
+      summary: register new user
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                  format: email
+                name:
+                  type: string
+                phone_number:
+                  type: string
+                password:
+                  type: string
+                  format: password
+                profile_photo:
+                  type: string
+                background_photo:
+                  type: string
+            example:
+              email: "putra123@gmail.com"
+              name: "Putra"
+              phone_number: "08123456789"
+              password: "putra123"
+              profile_photo: "profile-photo.png"
+              background_photo: "background-photo.png"
+      responses:
+        201:
+          description: "Berhasil insert data"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+              example:
+                message: "success register"
+        400:
+          $ref: '#/components/responses/400'
+        500:
+          $ref: '#/components/responses/500'
+  
+  /login:
+    post:
+      tags:
+        - "Users"
+      description: digunakan untuk masuk kedalam sistem
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                  format: email
+                password:
+                  type: string
+                  format: password
+            example:
+              email: putra123@gmail.com
+              password: "putra123"
+      responses:
+        200:
+          description: "success login"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/responseObject'
+              example:
+                data:
+                  id: 1
+                  nama: "Putra"
+                  email: "putra123@gmail.com"
+                  phone_number: "08123456789"
+                  profile_photo: "profile_photo.png"
+                  background_photo: "background_photo.png"
+                token: "dfeft434r34t3t"
+                message: "success login"
+        401:
+          description: "wrong password"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+              example:
+                message: "wrong password"
+        404:
+          description: "user not found"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+              example:
+                message: "wrong email"
+        500:
+          $ref: '#/components/responses/500'
+  /users/{id}:
+    get:
+      tags:
+        - "Users"
+      description: "digunakan untuk melihat profil user berdasarkan ID"
+      summary: "user's profile"
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        200:
+          description: "sukses menampilkan data user"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/responseObject'
+              example:
+                data:
+                  id: 1
+                  nama: Putra
+                  email: ekacahyaps@gmail.com
+                message: "success get user"
+        404:
+          description: "data tidak ditemukan"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+              example:
+                message: "data not found"
+        500:
+          $ref: '#/components/responses/500'
+    put:
+      tags:
+        - "Users"
+      description: digunakan untuk memperbarui data pengguna
+      summary: update user's data
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                  format: email
+                name:
+                  type: string
+                phone_number:
+                  type: string
+                password:
+                  type: string
+                  format: password
+                profile_photo:
+                  type: string
+                background_photo:
+                  type: string
+            example:
+              id: 1
+              email: "putra123@gmail.com"
+              name: "Putra"
+              phone_number: "08123456789"
+              password: "putra123"
+              profile_photo: "profile-photo.png"
+              background_photo: "background-photo.png"
+      responses:
+        200:
+          description: "Berhasil memperbarui data pengguna"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/responseObject'
+              example:
+                data:
+                  id: 1
+                  email: "putra123@gmail.com"
+                  name: "Putra"
+                  phone_number: "08123456789"
+                  password: "putra123"
+                  profile_photo: "profile-photo.png"
+                  background_photo: "background-photo.png"
+                message: "success update user's data"
+        404:
+          description: "Kesalahan input data dari user"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+              example:
+                message: "data tidak ditemukan"
+        400:
+          $ref: '#/components/responses/400'
+        500:
+          $ref: '#/components/responses/500'
+    delete:
+      tags:
+        - "Users"
+      description: "digunakan untuk menghapus data user"
+      summary: "delete user's account"
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        200:
+          description: "success deleted user"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+              example:
+                message: "success delete user"
+        404:
+          description: "ID not found"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+              example:
+                message: "user not found"
+        500:
+          $ref: '#/components/responses/500'
+  
+  /posts:
+    post:
+      tags:
+        - "Posts"
+      description: digunakan untuk masuk membuat postingan
+      summary: "post something"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                body:
+                  type: string
+                photo:
+                  type: string
+            example:
+              body: "hari ini cerah sekali"
+              photo: "photo.png"
+      responses:
+        201:
+          description: "Berhasil posting"
+          content:
+            application/json:
+                schema:
+                  $ref: '#/components/schemas/responseObject'
+                example:
+                  data:
+                    body: "hari ini cerah sekali"
+                    photo: "photo.png"
+                  message: "success posting"   
+        400:
+          $ref: '#/components/responses/400'
+        500:
+          $ref: '#/components/responses/500'
+    get:
+        tags:
+          - "Posts"
+        description: digunakan untuk melihat semua postingan
+        summary: view all posts
+        responses:
+          200:
+            description: "berhasil lihat data user"
+            content:
+              application/json:
+                schema:
+                  $ref: '#/components/schemas/responseObjectArr'
+                example:
+                  data:
+                    - cerita: hari ini cerah sekali
+                      photo: "photo1.png"
+                    - cerita: hari ini cukup berawan
+                      photo: "photo2.png"
+                    - cerita: hatiku sedang gembira
+                      photo: "photo3.png"
+          404:
+            description: "kesalahan input data"
+            content:
+              application/json:
+                schema:
+                  type: object
+                  properties:
+                    message: 
+                      type: string
+                example:
+                  message: "post not found"
+          500:
+            $ref: '#/components/responses/500'
+  /posts/{id}:
+    put:
+      tags:
+        - "Posts"
+      description: digunakan untuk masuk memperbarui postingan
+      summary: "update post"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                body:
+                  type: string
+                photo:
+                  type: string
+            example:
+              body: hari ini cukup berawan
+              photo: "photo.png"
+      responses:
+        200:
+          description: "Berhasil memperbarui data pengguna"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/responseObject'
+              example:
+                data:
+                  cerita: hari ini cukup berawan
+                  photo: ""
+        404:
+          description: "Kesalahan input data dari user"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+              example:
+                message: "post not found"
+        400:
+          $ref: '#/components/responses/400'
+        500:
+          $ref: '#/components/responses/500'
+    delete:
+      tags:
+        - "Posts"
+      description: "digunakan untuk menghapus postingan user"
+      summary: "delete user's post"
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        200:
+          description: "success deleted post"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+              example:
+                message: "success delete post"
+        404:
+          description: "ID not found"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+              example:
+                message: "post not found"
+        500:
+          $ref: '#/components/responses/500'
+    get:
+        tags:
+          - "Posts"
+        description: digunakan untuk melihat semua postingan
+        summary: view all posts
+        responses:
+          200:
+            description: "berhasil lihat data user"
+            content:
+              application/json:
+                schema:
+                  $ref: '#/components/schemas/responseObject'
+                example:
+                  data:
+                    cerita: hari ini cerah sekali
+                    photo: "photo1.png"
+          404:
+            description: "kesalahan input data"
+            content:
+              application/json:
+                schema:
+                  type: object
+                  properties:
+                    message: 
+                      type: string
+                example:
+                  message: "post not found"
+          500:
+            $ref: '#/components/responses/500'
+
+  /post/{post-id}/comments:
+    post:
+      tags:
+        - "Comments"
+      description: digunakan untuk masuk membuat komentar suatu postingan
+      summary: "Comment something"
+      parameters:
+        - name: post-id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                body:
+                  type: string
+            example:
+              body: "hari ini cerah sekali"
+      responses:
+        201:
+          description: "Berhasil comment"
+          content:
+            application/json:
+                schema:
+                  $ref: '#/components/schemas/responseObject'
+                example:
+                  data:
+                    body: "hari ini cerah sekali"
+                  message: "success comment"   
+        400:
+          $ref: '#/components/responses/400'
+        500:
+          $ref: '#/components/responses/500'
+    get:
+        tags:
+          - "Comments"
+        description: digunakan untuk melihat semua komentar pada postingan tertentu
+        summary: view all comments
+        responses:
+          200:
+            description: "berhasil lihat comments"
+            content:
+              application/json:
+                schema:
+                  $ref: '#/components/schemas/responseObjectArr'
+                example:
+                  data:
+                    - body: "bagus"
+                    - body: "keren"
+                    - body: "mantap"
+          404:
+            description: "kesalahan input data"
+            content:
+              application/json:
+                schema:
+                  type: object
+                  properties:
+                    message: 
+                      type: string
+                example:
+                  message: "post not found"
+          500:
+            $ref: '#/components/responses/500'
+
+  /post/{post-id}/comments/{comment-id}:
+    put:
+      tags:
+        - "Comments"
+      description: digunakan untuk edit komentar
+      summary: "update komentar"
+      parameters:
+        - name: post-id
+          in: path
+          required: true
+          schema:
+            type: integer
+        - name: comment-id
+          in: path
+          required: true
+          schema:
+            type: integer    
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                body:
+                  type: string
+            example:
+              body: oke
+      responses:
+        200:
+          description: "Berhasil memperbarui komentar"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/responseObject'
+              example:
+                data:
+                  body: "oke"
+        404:
+          description: "Kesalahan input data dari user"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+              example:
+                message: "comment not found"
+        400:
+          $ref: '#/components/responses/400'
+        500:
+          $ref: '#/components/responses/500'
+    delete:
+      tags:
+        - "Comments"
+      description: "digunakan untuk menghapus komentar user"
+      summary: "delete user's comment"
+      parameters:
+        - name: post-id
+          in: path
+          required: true
+          schema:
+            type: integer
+        - name: comment-id
+          in: path
+          required: true
+          schema:
+            type: integer  
+      responses:
+        200:
+          description: "success delete comment"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+              example:
+                message: "success delete comment"
+        404:
+          description: "ID not found"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+              example:
+                message: "comment not found"
+        500:
+          $ref: '#/components/responses/500'
+components:
+  schemas:
+    responseObject:
+      type: object
+      properties:
+        data:
+          type: object
+        message:
+          type: string
+    responseObjectArr:
+      type: object
+      properties:
+        data:
+          type: array
+          items: 
+            type: object
+        message:
+          type: string
+  responses:
+    400:
+      description: "Kesalahan dari user"
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+          example:
+            message: "wrong input"
+    500:
+      description: "Kesalahan dari server"
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+            example:
+              message: "server problem"
