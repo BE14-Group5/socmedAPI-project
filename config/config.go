@@ -1,24 +1,31 @@
 package config
 
 import (
-	"log"
+	"fmt"
 	"os"
 	"strconv"
 
-	"github.com/spf13/viper"
+	"github.com/aws/aws-sdk-go/aws"
+	"github.com/aws/aws-sdk-go/aws/credentials"
+	"github.com/aws/aws-sdk-go/aws/session"
+	"github.com/joho/godotenv"
 )
 
 var (
-	JWT_KEY string = ""
+	JWT_KEY   string = ""
+	KEYID     string = ""
+	ACCESSKEY string = ""
 )
 
 type AppConfig struct {
-	DBUser string
-	DBPass string
-	DBHost string
-	DBPort int
-	DBName string
-	jwtKey string
+	DBUser    string
+	DBPass    string
+	DBHost    string
+	DBPort    int
+	DBName    string
+	jwtKey    string
+	keyid     string
+	accesskey string
 }
 
 func InitConfig() *AppConfig {
@@ -28,7 +35,14 @@ func InitConfig() *AppConfig {
 func ReadEnv() *AppConfig {
 	app := AppConfig{}
 	isRead := true
-
+	if val, found := os.LookupEnv("KEYID"); found {
+		app.keyid = val
+		isRead = false
+	}
+	if val, found := os.LookupEnv("ACCESSKEY"); found {
+		app.accesskey = val
+		isRead = false
+	}
 	if val, found := os.LookupEnv("JWT_KEY"); found {
 		app.jwtKey = val
 		isRead = false
@@ -56,22 +70,39 @@ func ReadEnv() *AppConfig {
 	}
 
 	if isRead {
-		viper.AddConfigPath(".")
-		viper.SetConfigName("local")
-		viper.SetConfigType("env")
+		err := godotenv.Load("local.env")
+		if err != nil {
+			fmt.Println("Error saat baca env", err.Error())
+			return nil
+		}
 
-		err := viper.ReadInConfig()
+		app.DBUser = os.Getenv("DBUSER")
+		app.DBPass = os.Getenv("DBPASS")
+		app.DBHost = os.Getenv("DBHOST")
+		readData := os.Getenv("DBPORT")
+		app.DBPort, err = strconv.Atoi(readData)
 		if err != nil {
-			log.Println("error read config : ", err.Error())
+			fmt.Println("Error saat convert", err.Error())
 			return nil
 		}
-		err = viper.Unmarshal(&app)
-		if err != nil {
-			log.Println("error parse config : ", err.Error())
-			return nil
-		}
+		app.DBName = os.Getenv("DBNAME")
+		app.jwtKey = os.Getenv("JWTKEY")
+		app.keyid = os.Getenv("KEYID")
+		app.accesskey = os.Getenv("ACCESSKEY")
+
+		JWT_KEY = app.jwtKey
+		KEYID = app.keyid
+		ACCESSKEY = app.accesskey
 	}
 
-	JWT_KEY = app.jwtKey
 	return &app
+}
+
+func S3Config() *session.Session {
+	s3Config := &aws.Config{
+		Region:      aws.String("ap-southeast-1"),
+		Credentials: credentials.NewStaticCredentials(KEYID, ACCESSKEY, ""),
+	}
+	s3Session, _ := session.NewSession(s3Config)
+	return s3Session
 }
