@@ -38,6 +38,7 @@ func ReadEnv() *AppConfig {
 	isRead := true
 	if val, found := os.LookupEnv("KEYID"); found {
 		app.keyid = val
+		log.Println("keyid", val)
 		isRead = false
 	}
 	if val, found := os.LookupEnv("ACCESSKEY"); found {
@@ -50,6 +51,7 @@ func ReadEnv() *AppConfig {
 	}
 	if val, found := os.LookupEnv("DBUSER"); found {
 		app.DBUser = val
+		log.Println("dbuser ",val)
 		isRead = false
 	}
 	if val, found := os.LookupEnv("DBPASS"); found {
