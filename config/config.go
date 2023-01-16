@@ -2,25 +2,107 @@ package config
 
 import (
 	"fmt"
-	"log"
-	"os/user"
+	"os"
+	"strconv"
 
-	"gorm.io/driver/mysql"
-	"gorm.io/gorm"
+	"github.com/aws/aws-sdk-go/aws"
+	"github.com/aws/aws-sdk-go/aws/credentials"
+	"github.com/aws/aws-sdk-go/aws/session"
+	"github.com/joho/godotenv"
 )
 
-func InitDB(ac AppConfig) *gorm.DB {
-	dsn := fmt.Sprintf("%s:%s@tcp(%s:%d)/%s?charset=utf8mb4&parseTime=True&loc=Local",
-		ac.DBUser, ac.DBPass, ac.DBHost, ac.DBPort, ac.DBName)
-	db, err := gorm.Open(mysql.Open(dsn), &gorm.Config{})
-	if err != nil {
-		log.Println("database connection error : ", err.Error())
-		return nil
-	}
+var (
+	JWT_KEY   string = ""
+	KEYID     string = ""
+	ACCESSKEY string = ""
+)
 
-	return db
+type AppConfig struct {
+	DBUser    string
+	DBPass    string
+	DBHost    string
+	DBPort    int
+	DBName    string
+	jwtKey    string
+	keyid     string
+	accesskey string
 }
 
-func Migrate(db *gorm.DB) {
-	db.AutoMigrate(user.User{})
+func InitConfig() *AppConfig {
+	return ReadEnv()
+}
+
+func ReadEnv() *AppConfig {
+	app := AppConfig{}
+	isRead := true
+	if val, found := os.LookupEnv("KEYID"); found {
+		app.keyid = val
+		isRead = false
+	}
+	if val, found := os.LookupEnv("ACCESSKEY"); found {
+		app.accesskey = val
+		isRead = false
+	}
+	if val, found := os.LookupEnv("JWT_KEY"); found {
+		app.jwtKey = val
+		isRead = false
+	}
+	if val, found := os.LookupEnv("DBUSER"); found {
+		app.DBUser = val
+		isRead = false
+	}
+	if val, found := os.LookupEnv("DBPASS"); found {
+		app.DBPass = val
+		isRead = false
+	}
+	if val, found := os.LookupEnv("DBHOST"); found {
+		app.DBHost = val
+		isRead = false
+	}
+	if val, found := os.LookupEnv("DBPORT"); found {
+		cnv, _ := strconv.Atoi(val)
+		app.DBPort = cnv
+		isRead = false
+	}
+	if val, found := os.LookupEnv("DBNAME"); found {
+		app.DBName = val
+		isRead = false
+	}
+
+	if isRead {
+		err := godotenv.Load("local.env")
+		if err != nil {
+			fmt.Println("Error saat baca env", err.Error())
+			return nil
+		}
+
+		app.DBUser = os.Getenv("DBUSER")
+		app.DBPass = os.Getenv("DBPASS")
+		app.DBHost = os.Getenv("DBHOST")
+		readData := os.Getenv("DBPORT")
+		app.DBPort, err = strconv.Atoi(readData)
+		if err != nil {
+			fmt.Println("Error saat convert", err.Error())
+			return nil
+		}
+		app.DBName = os.Getenv("DBNAME")
+		app.jwtKey = os.Getenv("JWTKEY")
+		app.keyid = os.Getenv("KEYID")
+		app.accesskey = os.Getenv("ACCESSKEY")
+
+		JWT_KEY = app.jwtKey
+		KEYID = app.keyid
+		ACCESSKEY = app.accesskey
+	}
+
+	return &app
+}
+
+func S3Config() *session.Session {
+	s3Config := &aws.Config{
+		Region:      aws.String("ap-southeast-1"),
+		Credentials: credentials.NewStaticCredentials(KEYID, ACCESSKEY, ""),
+	}
+	s3Session, _ := session.NewSession(s3Config)
+	return s3Session
 }
