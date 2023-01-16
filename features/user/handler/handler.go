@@ -1,6 +1,7 @@
 package handler
 
 import (
+	"log"
 	"net/http"
 	"simple-social-media-API/features/user"
 	"simple-social-media-API/helper"
@@ -22,24 +23,29 @@ func (uc *userControl) Register() echo.HandlerFunc {
 	return func(c echo.Context) error {
 		input := RegisterRequest{}
 		if err := c.Bind(&input); err != nil {
+			log.Println("error bind input")
 			return c.JSON(http.StatusBadRequest, "wrong input")
 		}
 
 		if file, err := c.FormFile("profile_photo"); err != nil {
+			log.Println("error read profile_photo")
 			return c.JSON(http.StatusBadRequest, "wrong image input")
 		} else {
 			dir, err := helper.UploadProfilePhoto(*file, input.Email)
 			if err != nil {
+				log.Println("error running UploadProfilePhoto")
 				return c.JSON(http.StatusInternalServerError, "server problem")
 			}
 			input.ProfilePhoto = dir
 		}
 
 		if file, err := c.FormFile("background_photo"); err != nil {
+			log.Println("error read background_photo ")
 			return c.JSON(http.StatusBadRequest, "wrong image input")
 		} else {
 			dir, err := helper.UploadBackgroundPhoto(*file, input.Email)
 			if err != nil {
+				log.Println("error running UploadBackgroundPhoto")
 				return c.JSON(http.StatusInternalServerError, "server problem")
 			}
 			input.BackgroundPhoto = dir
@@ -47,6 +53,7 @@ func (uc *userControl) Register() echo.HandlerFunc {
 
 		res, err := uc.srv.Register(*ToCore(input))
 		if err != nil {
+			log.Println("error running register service")
 			return c.JSON(http.StatusInternalServerError, "server problem")
 		}
 		return c.JSON(http.StatusCreated, map[string]interface{}{
