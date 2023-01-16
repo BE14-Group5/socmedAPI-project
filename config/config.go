@@ -3,6 +3,7 @@ package config
 import (
 	"fmt"
 	"os"
+	"log"
 	"strconv"
 
 	"github.com/aws/aws-sdk-go/aws"
@@ -99,6 +100,7 @@ func ReadEnv() *AppConfig {
 }
 
 func S3Config() *session.Session {
+	log.Println("DEBUG ", JWT_KEY, KEYID, ACCESSKEY)
 	s3Config := &aws.Config{
 		Region:      aws.String("ap-southeast-1"),
 		Credentials: credentials.NewStaticCredentials(KEYID, ACCESSKEY, ""),
