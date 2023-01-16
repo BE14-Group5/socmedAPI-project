@@ -38,20 +38,22 @@ func ReadEnv() *AppConfig {
 	isRead := true
 	if val, found := os.LookupEnv("KEYID"); found {
 		app.keyid = val
-		log.Println("keyid", val)
 		isRead = false
+		KEYID = val
 	}
 	if val, found := os.LookupEnv("ACCESSKEY"); found {
 		app.accesskey = val
 		isRead = false
+		ACCESSKEY = val
+
 	}
 	if val, found := os.LookupEnv("JWT_KEY"); found {
 		app.jwtKey = val
 		isRead = false
+		JWT_KEY = val
 	}
 	if val, found := os.LookupEnv("DBUSER"); found {
 		app.DBUser = val
-		log.Println("dbuser ", val)
 		isRead = false
 	}
 	if val, found := os.LookupEnv("DBPASS"); found {
@@ -92,11 +94,11 @@ func ReadEnv() *AppConfig {
 		app.jwtKey = os.Getenv("JWTKEY")
 		app.keyid = os.Getenv("KEYID")
 		app.accesskey = os.Getenv("ACCESSKEY")
-	}
 
-	JWT_KEY = app.jwtKey
-	KEYID = app.keyid
-	ACCESSKEY = app.accesskey
+		JWT_KEY = app.jwtKey
+		KEYID = app.keyid
+		ACCESSKEY = app.accesskey
+	}
 
 	return &app
 }
