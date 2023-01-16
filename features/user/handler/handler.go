@@ -42,7 +42,7 @@ func (uc *userControl) Register() echo.HandlerFunc {
 			if err != nil {
 				return c.JSON(http.StatusInternalServerError, "server problem")
 			}
-			input.ProfilePhoto = dir
+			input.BackgroundPhoto = dir
 		}
 
 		res, err := uc.srv.Register(*ToCore(input))
