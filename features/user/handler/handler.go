@@ -32,25 +32,49 @@ func (uc *userControl) Register() echo.HandlerFunc {
 			log.Println("error read profile_photo")
 			return c.JSON(http.StatusBadRequest, helper.ErrorResponse("wrong image input"))
 		} else {
-			dir, err := helper.UploadProfilePhoto(*file, input.Email)
+			path, err := helper.UploadProfilePhotoS3(*file, input.Email)
 			if err != nil {
 				log.Println("error running UploadProfilePhoto")
 				return c.JSON(http.StatusInternalServerError, helper.ErrorResponse("server problem"))
 			}
-			input.ProfilePhoto = dir
+			input.ProfilePhoto = path
 		}
 
 		if file, err := c.FormFile("background_photo"); err != nil {
-			log.Println("error read background_photo ")
+			log.Println("error read background_photo")
 			return c.JSON(http.StatusBadRequest, helper.ErrorResponse("wrong image input"))
 		} else {
-			dir, err := helper.UploadBackgroundPhoto(*file, input.Email)
+			path, err := helper.UploadBackgroundPhotoS3(*file, input.Email)
 			if err != nil {
 				log.Println("error running UploadBackgroundPhoto")
 				return c.JSON(http.StatusInternalServerError, helper.ErrorResponse("server problem"))
 			}
-			input.BackgroundPhoto = dir
+			input.BackgroundPhoto = path
 		}
+
+		// if file, err := c.FormFile("profile_photo"); err != nil {
+		// 	log.Println("error read profile_photo")
+		// 	return c.JSON(http.StatusBadRequest, helper.ErrorResponse("wrong image input"))
+		// } else {
+		// 	dir, err := helper.UploadProfilePhoto(*file, input.Email)
+		// 	if err != nil {
+		// 		log.Println("error running UploadProfilePhoto")
+		// 		return c.JSON(http.StatusInternalServerError, helper.ErrorResponse("server problem"))
+		// 	}
+		// 	input.ProfilePhoto = dir
+		// }
+
+		// if file, err := c.FormFile("background_photo"); err != nil {
+		// 	log.Println("error read background_photo ")
+		// 	return c.JSON(http.StatusBadRequest, helper.ErrorResponse("wrong image input"))
+		// } else {
+		// 	dir, err := helper.UploadBackgroundPhoto(*file, input.Email)
+		// 	if err != nil {
+		// 		log.Println("error running UploadBackgroundPhoto")
+		// 		return c.JSON(http.StatusInternalServerError, helper.ErrorResponse("server problem"))
+		// 	}
+		// 	input.BackgroundPhoto = dir
+		// }
 
 		res, err := uc.srv.Register(*ToCore(input))
 		if err != nil {
