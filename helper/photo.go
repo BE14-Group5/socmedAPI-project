@@ -6,6 +6,10 @@ import (
 	"mime/multipart"
 	"os"
 	"path/filepath"
+	"simple-social-media-API/config"
+
+	"github.com/aws/aws-sdk-go/aws"
+	"github.com/aws/aws-sdk-go/service/s3/s3manager"
 )
 
 func UploadProfilePhoto(file multipart.FileHeader, email string) (string, error) {
@@ -48,4 +52,42 @@ func UploadBackgroundPhoto(file multipart.FileHeader, email string) (string, err
 		return "", errors.New("server problem")
 	}
 	return dir, nil
+}
+
+func UploadProfilePhotoS3(file multipart.FileHeader, email string) (string, error) {
+	s3Session := config.S3Config()
+	uploader := s3manager.NewUploader(s3Session)
+	src, err := file.Open()
+	if err != nil {
+		return "", err
+	}
+	defer src.Close()
+	ext := filepath.Ext(file.Filename)
+
+	_, err = uploader.Upload(&s3manager.UploadInput{
+		Bucket: aws.String("socmedapibucket"),
+		Key:    aws.String("files/user/" + email + "/profile-photo" + ext),
+		Body:   src,
+	})
+	path := "files/user/" + email + "/profile-photo" + ext
+	return path, nil
+}
+
+func UploadBackgroundPhotoS3(file multipart.FileHeader, email string) (string, error) {
+	s3Session := config.S3Config()
+	uploader := s3manager.NewUploader(s3Session)
+	src, err := file.Open()
+	if err != nil {
+		return "", err
+	}
+	defer src.Close()
+	ext := filepath.Ext(file.Filename)
+
+	_, err = uploader.Upload(&s3manager.UploadInput{
+		Bucket: aws.String("socmedapibucket"),
+		Key:    aws.String("files/user/" + email + "/background-photo" + ext),
+		Body:   src,
+	})
+	path := "files/user/" + email + "/background-photo" + ext
+	return path, nil
 }
