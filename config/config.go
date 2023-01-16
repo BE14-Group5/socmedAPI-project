@@ -2,8 +2,8 @@ package config
 
 import (
 	"fmt"
-	"os"
 	"log"
+	"os"
 	"strconv"
 
 	"github.com/aws/aws-sdk-go/aws"
@@ -51,7 +51,7 @@ func ReadEnv() *AppConfig {
 	}
 	if val, found := os.LookupEnv("DBUSER"); found {
 		app.DBUser = val
-		log.Println("dbuser ",val)
+		log.Println("dbuser ", val)
 		isRead = false
 	}
 	if val, found := os.LookupEnv("DBPASS"); found {
@@ -92,11 +92,11 @@ func ReadEnv() *AppConfig {
 		app.jwtKey = os.Getenv("JWTKEY")
 		app.keyid = os.Getenv("KEYID")
 		app.accesskey = os.Getenv("ACCESSKEY")
-
-		JWT_KEY = app.jwtKey
-		KEYID = app.keyid
-		ACCESSKEY = app.accesskey
 	}
+
+	JWT_KEY = app.jwtKey
+	KEYID = app.keyid
+	ACCESSKEY = app.accesskey
 
 	return &app
 }
