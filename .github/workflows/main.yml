@@ -41,4 +41,4 @@ jobs:
           docker pull ${{ secrets.DOCKER_USER }}/socmedproject:latest
           docker stop socmedproject
           docker rm socmedproject
-          docker run --name socmedproject -d -e DBUSER=admin -e DBPASS=${{ secrets.DBPASS_RDS_DATABASE1 }} -e DBHOST=projectsocmeddb.cssizdymws4b.ap-southeast-1.rds.amazonaws.com -e DBPORT=3306 -e DBNAME=socmedDB -e JWT_KEY="BEa|t3rr4" -e KEYID=${{ secrets.S3_KEYID }} -e ACCESSKEY=${{ secrets.S3_ACCESSKEY }} -p 80:8000 mfauzanptra/socmedproject
+          docker run --name socmedproject -d -e DBUSER=admin -e DBPASS=${{ secrets.DBPASS_RDS_SOCMEDDB }} -e DBHOST=projectsocmeddb.cssizdymws4b.ap-southeast-1.rds.amazonaws.com -e DBPORT=3306 -e DBNAME=socmedDB -e JWT_KEY="BEa|t3rr4" -e KEYID=${{ secrets.S3_KEYID }} -e ACCESSKEY=${{ secrets.S3_ACCESSKEY }} -p 80:8000 mfauzanptra/socmedproject
