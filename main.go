@@ -38,7 +38,8 @@ func main() {
 
 	//posting
 	e.POST("/posts", postHdl.Add(), middleware.JWT([]byte(config.JWT_KEY)))
-	e.PUT("/posts/:id", postHdl.Add(), middleware.JWT([]byte(config.JWT_KEY)))
+	e.PUT("/posts/:id", postHdl.Update(), middleware.JWT([]byte(config.JWT_KEY)))
+	e.DELETE("/posts/:id", postHdl.Delete(), middleware.JWT([]byte(config.JWT_KEY)))
 
 	if err := e.Start(":8000"); err != nil {
 		log.Println(err.Error())
