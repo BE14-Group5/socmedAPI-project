@@ -1,6 +1,10 @@
 package post
 
-import "github.com/labstack/echo/v4"
+import (
+	"mime/multipart"
+
+	"github.com/labstack/echo/v4"
+)
 
 type Core struct {
 	ID     uint
@@ -19,7 +23,7 @@ type PostHandler interface {
 }
 
 type PostService interface {
-	Add(token interface{}, newPost Core) (Core, error)
+	Add(token interface{}, newPost Core, postPhoto *multipart.FileHeader) (Core, error)
 	Update(token interface{}, postID uint, updatedPost Core) (Core, error)
 	Delete(token interface{}, postID uint) error
 	MyPosts(token interface{}) ([]Core, error)

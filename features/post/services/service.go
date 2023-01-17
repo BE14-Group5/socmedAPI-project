@@ -2,6 +2,7 @@ package service
 
 import (
 	"errors"
+	"mime/multipart"
 	"simple-social-media-API/features/post"
 	"simple-social-media-API/helper"
 	"strings"
@@ -17,10 +18,18 @@ func Isolation(d post.PostData) post.PostService {
 	}
 }
 
-func (ps *postSrvc) Add(token interface{}, newPost post.Core) (post.Core, error) {
+func (ps *postSrvc) Add(token interface{}, newPost post.Core, postPhoto *multipart.FileHeader) (post.Core, error) {
 	userID := helper.ExtractToken(token)
 	if userID <= 0 {
 		return post.Core{}, errors.New("user tidak ditemukan")
+	}
+
+	if postPhoto != nil {
+		path, err := helper.UploadPostPhotoS3(*postPhoto, helper.ExtractToken(token))
+		if err != nil {
+			return post.Core{}, err
+		}
+		newPost.Image = path
 	}
 
 	res, err := ps.data.Add(uint(userID), newPost)
