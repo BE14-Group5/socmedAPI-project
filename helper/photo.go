@@ -112,13 +112,13 @@ func UploadPostPhotoS3(file multipart.FileHeader, userID int) (string, error) {
 	cnv := strconv.Itoa(userID)
 	_, err = uploader.Upload(&s3manager.UploadInput{
 		Bucket: aws.String("socmedapibucket"),
-		Key:    aws.String("files/user/" + cnv + "/post-photo" + ext),
+		Key:    aws.String("files/post/" + cnv + "/post-photo" + ext),
 		Body:   src,
 	})
 	if err != nil {
 		return "", errors.New("problem with upload post photo")
 	}
-	path := "files/user/" + cnv + "/post-photo" + ext
+	path := "files/post/" + cnv + "/post-photo" + ext
 	return path, nil
 }
 
