@@ -33,8 +33,9 @@ func main() {
 	e.Use(middleware.LoggerWithConfig(middleware.LoggerConfig{
 		Format: "method=${method}, uri=${uri}, status=${status}, error=${error}\n",
 	}))
-	// e.File("/", "files")
+	e.Static("/files", "./files")
 	e.POST("/register", userHdl.Register())
+	e.POST("/login", userHdl.Login())
 
 	//posting
 	e.POST("/posts", postHdl.Add(), middleware.JWT([]byte(config.JWT_KEY)))

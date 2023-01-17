@@ -13,6 +13,11 @@ type RegisterRequest struct {
 	BackgroundPhoto string `json:"background_photo" form:"background_photo"`
 }
 
+type LoginReqest struct {
+	Email    string `json:"email" form:"email"`
+	Password string `json:"password" form:"password"`
+}
+
 func ToCore(data interface{}) *user.Core {
 	res := user.Core{}
 

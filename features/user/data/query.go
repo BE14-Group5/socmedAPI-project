@@ -2,6 +2,7 @@ package data
 
 import (
 	"errors"
+	"log"
 	"simple-social-media-API/features/user"
 
 	"gorm.io/gorm"
@@ -34,7 +35,13 @@ func (uq *userQuery) Register(newUser user.Core) (user.Core, error) {
 	return newUser, nil
 }
 func (uq *userQuery) Login(email string) (user.Core, error) {
-	return user.Core{}, nil
+	res := User{}
+
+	if err := uq.db.Where("email = ?", email).First(&res).Error; err != nil {
+		log.Println("login query error: ", err.Error())
+		return user.Core{}, errors.New("user not found")
+	}
+	return ToCore(res), nil
 }
 func (uq *userQuery) Profile(id uint) (user.Core, error) {
 	return user.Core{}, nil
