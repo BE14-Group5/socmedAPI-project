@@ -5,6 +5,7 @@ import (
 	"mime/multipart"
 	"path/filepath"
 	"simple-social-media-API/config"
+	"strconv"
 
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/service/s3/s3manager"
@@ -95,6 +96,29 @@ func UploadBackgroundPhotoS3(file multipart.FileHeader, email string) (string, e
 		return "", errors.New("problem with upload profile photo")
 	}
 	path := ObjectURL + "files/user/" + email + "/background-photo" + ext
+	return path, nil
+}
+
+func UploadPostPhotoS3(file multipart.FileHeader, userID int) (string, error) {
+	s3Session := config.S3Config()
+	uploader := s3manager.NewUploader(s3Session)
+	src, err := file.Open()
+	if err != nil {
+		return "", err
+	}
+	defer src.Close()
+	ext := filepath.Ext(file.Filename)
+
+	cnv := strconv.Itoa(userID)
+	_, err = uploader.Upload(&s3manager.UploadInput{
+		Bucket: aws.String("socmedapibucket"),
+		Key:    aws.String("files/post/" + cnv + "/post-photo" + ext),
+		Body:   src,
+	})
+	if err != nil {
+		return "", errors.New("problem with upload post photo")
+	}
+	path := "files/post/" + cnv + "/post-photo" + ext
 	return path, nil
 }
 
