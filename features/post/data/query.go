@@ -46,7 +46,7 @@ func (pd *postData) Update(postID uint, userID uint, updatedPost post.Core) (pos
 		log.Println("update post query error :", err.Error())
 		return post.Core{}, errors.New("not found")
 	}
-
+	log.Println("update di query", convert.ID)
 	return DataToCore(convert), nil
 }
 

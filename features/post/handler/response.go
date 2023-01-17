@@ -28,14 +28,14 @@ func AddPostToResponse(dataCore post.Core) AddPostResponse {
 }
 
 type UpdatePostResponse struct {
-	ID      uint   `json:"id"`
+	// ID      uint   `json:"id"`
 	Content string `json:"content"`
 	Photo   string `json:"photo"`
 }
 
 func UpdatePostToResponse(dataCore post.Core) UpdatePostResponse {
 	return UpdatePostResponse{
-		ID:      dataCore.ID,
+		// ID:      dataCore.ID,
 		Content: dataCore.Content,
 		Photo:   dataCore.Photo,
 	}

@@ -2,6 +2,7 @@ package service
 
 import (
 	"errors"
+	"log"
 	"mime/multipart"
 	"simple-social-media-API/features/post"
 	"simple-social-media-API/helper"
@@ -70,6 +71,7 @@ func (ps *postSrvc) Update(token interface{}, postID uint, updatedPost post.Core
 		}
 		return post.Core{}, errors.New(msg)
 	}
+	log.Println("update di service", res.ID)
 	return res, nil
 }
 

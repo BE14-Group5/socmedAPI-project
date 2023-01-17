@@ -82,6 +82,9 @@ func (ph *postHandle) Update() echo.HandlerFunc {
 			log.Println("error running update post service")
 			return c.JSON(http.StatusInternalServerError, helper.ErrorResponse("server problem"))
 		}
+
+		log.Println("update di handler", res.ID)
+
 		return c.JSON(http.StatusCreated, map[string]interface{}{
 			"data":    UpdatePostToResponse(res),
 			"message": "success update post",
