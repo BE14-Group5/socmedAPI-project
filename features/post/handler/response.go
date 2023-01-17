@@ -8,14 +8,14 @@ type PostResponse struct {
 	ID      uint   `json:"id"`
 	Content string `json:"content"`
 	Photo   string `json:"photo"`
-	Writer  string `json:"writer"`
+	UserID  uint   `json:"user_id"`
 }
 
 type AddPostResponse struct {
 	ID      uint   `json:"id"`
 	Content string `json:"content"`
 	Photo   string `json:"photo"`
-	Writer  string `json:"writer"`
+	UserID  uint   `json:"user_id"`
 }
 
 func AddPostToResponse(dataCore post.Core) AddPostResponse {
@@ -23,7 +23,7 @@ func AddPostToResponse(dataCore post.Core) AddPostResponse {
 		ID:      dataCore.ID,
 		Content: dataCore.Content,
 		Photo:   dataCore.Photo,
-		Writer:  dataCore.Writer,
+		UserID:  dataCore.UserID,
 	}
 }
 

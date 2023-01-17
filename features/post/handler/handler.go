@@ -31,8 +31,8 @@ func (ph *postHandle) Add() echo.HandlerFunc {
 			return c.JSON(http.StatusBadRequest, "format inputan salah")
 		}
 
-		if file, err := c.FormFile("image"); err != nil {
-			log.Println("error read image")
+		if file, err := c.FormFile("photo"); err != nil {
+			log.Println("error read post photo")
 			return c.JSON(http.StatusBadRequest, helper.ErrorResponse("wrong image input"))
 		} else {
 			postPhoto = file
@@ -70,8 +70,8 @@ func (ph *postHandle) Update() echo.HandlerFunc {
 			return c.JSON(http.StatusBadRequest, "format inputan salah")
 		}
 
-		if file, err := c.FormFile("image"); err != nil {
-			log.Println("error read image")
+		if file, err := c.FormFile("photo"); err != nil {
+			log.Println("error read update post photo")
 			return c.JSON(http.StatusBadRequest, helper.ErrorResponse("wrong image input"))
 		} else {
 			updatePhoto = file
@@ -84,7 +84,7 @@ func (ph *postHandle) Update() echo.HandlerFunc {
 		}
 		return c.JSON(http.StatusCreated, map[string]interface{}{
 			"data":    UpdatePostToResponse(res),
-			"message": "success posting",
+			"message": "success update post",
 		})
 	}
 }

@@ -24,11 +24,12 @@ func (pd *postData) Add(userID uint, newPost post.Core) (post.Core, error) {
 
 	err := pd.db.Create(&convert).Error
 	if err != nil {
-		log.Println("add book query error")
+		log.Println("add book query error", err.Error())
 		return post.Core{}, err
 	}
 
 	newPost.ID = convert.ID
+	newPost.UserID = convert.UserID
 
 	return newPost, nil
 }
