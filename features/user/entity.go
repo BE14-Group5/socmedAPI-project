@@ -7,13 +7,13 @@ import (
 )
 
 type Core struct {
-	ID              uint
-	Email           string
-	Name            string
-	PhoneNumber     string
-	Password        string
-	ProfilePhoto    string
-	BackgroundPhoto string
+	ID              uint   `json:"id" form:"id"`
+	Email           string `json:"email" form:"email"`
+	Name            string `json:"name" form:"name"`
+	PhoneNumber     string `json:"phone_number" form:"phone_number"`
+	Password        string `json:"password" form:"password"`
+	ProfilePhoto    string `json:"profile_photo" form:"profile_photo"`
+	BackgroundPhoto string `json:"background_photo" form:"background_photo"`
 }
 
 type UserHandler interface {
