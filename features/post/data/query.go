@@ -50,6 +50,21 @@ func (pd *postData) Update(postID uint, userID uint, updatedPost post.Core) (pos
 }
 
 func (pd *postData) Delete(postID uint, userID uint) error {
+	qry := pd.db.Where("user_id = ?", userID).Delete(&Post{}, postID)
+
+	affrows := qry.RowsAffected
+
+	if affrows == 0 {
+		log.Println("no rows affected")
+		return errors.New("data not found")
+	}
+
+	err := qry.Error
+	if err != nil {
+		log.Println("delete book query error")
+		return errors.New("data not found")
+	}
+
 	return nil
 }
 
