@@ -1,6 +1,7 @@
 package data
 
 import (
+	"simple-social-media-API/features/post/data"
 	"simple-social-media-API/features/user"
 
 	"gorm.io/gorm"
@@ -14,6 +15,7 @@ type User struct {
 	Password        string
 	ProfilePhoto    string
 	BackgroundPhoto string
+	Post            []data.Post
 }
 
 func ToCore(data User) user.Core {
