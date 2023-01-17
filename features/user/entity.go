@@ -1,6 +1,10 @@
 package user
 
-import "github.com/labstack/echo/v4"
+import (
+	"mime/multipart"
+
+	"github.com/labstack/echo/v4"
+)
 
 type Core struct {
 	ID              uint
@@ -21,16 +25,16 @@ type UserHandler interface {
 }
 
 type UserService interface {
+	Register(newUser Core, profilePhoto *multipart.FileHeader, backgroundPhoto *multipart.FileHeader) (Core, error)
 	Login(email, password string) (string, Core, error)
-	Register(newUser Core) (Core, error)
 	Profile(token interface{}) (Core, error)
 	Update(token interface{}, updateData Core) (Core, error)
 	Deactive(token interface{}) error
 }
 
 type UserData interface {
-	Login(email string) (Core, error)
 	Register(newUser Core) (Core, error)
+	Login(email string) (Core, error)
 	Profile(id uint) (Core, error)
 	Update(id uint, updateData Core) (Core, error)
 	Deactive(id uint) error

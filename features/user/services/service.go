@@ -2,7 +2,9 @@ package services
 
 import (
 	"errors"
+	"mime/multipart"
 	"simple-social-media-API/features/user"
+	"simple-social-media-API/helper"
 	"strings"
 
 	"github.com/go-playground/validator/v10"
@@ -21,9 +23,26 @@ func New(ud user.UserData) user.UserService {
 	}
 }
 
-func (uuc *userUseCase) Register(newUser user.Core) (user.Core, error) {
+func (uuc *userUseCase) Register(newUser user.Core, profilePhoto *multipart.FileHeader, backgroundPhoto *multipart.FileHeader) (user.Core, error) {
 	hashed, _ := bcrypt.GenerateFromPassword([]byte(newUser.Password), bcrypt.DefaultCost)
 	newUser.Password = string(hashed)
+
+	if profilePhoto != nil {
+		path, err := helper.UploadProfilePhotoS3(*profilePhoto, newUser.Email)
+		if err != nil {
+			return user.Core{}, err
+		}
+		newUser.ProfilePhoto = path
+	}
+
+	if backgroundPhoto != nil {
+		path, err := helper.UploadBackgroundPhotoS3(*backgroundPhoto, newUser.Email)
+		if err != nil {
+			return user.Core{}, err
+		}
+		newUser.BackgroundPhoto = path
+	}
+
 	res, err := uuc.qry.Register(newUser)
 	if err != nil {
 		msg := ""
