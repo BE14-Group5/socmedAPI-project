@@ -1,6 +1,10 @@
 package helper
 
-import "github.com/golang-jwt/jwt"
+import (
+	"simple-social-media-API/config"
+
+	"github.com/golang-jwt/jwt"
+)
 
 func ExtractToken(t interface{}) int {
 	user := t.(*jwt.Token)
@@ -16,4 +20,13 @@ func ExtractToken(t interface{}) int {
 		return int(userId)
 	}
 	return -1
+}
+func GenerateJWT(id int) (string, interface{}) {
+	claims := jwt.MapClaims{}
+	claims["authorized"] = true
+	claims["userID"] = id
+	// claims["exp"] = time.Now().Add(time.Hour * 1).Unix() //Token expires after 1 hour
+	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
+	useToken, _ := token.SignedString([]byte(config.JWT_KEY))
+	return useToken, token
 }
