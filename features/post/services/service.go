@@ -74,6 +74,21 @@ func (ps *postSrvc) Update(token interface{}, postID uint, updatedPost post.Core
 }
 
 func (ps *postSrvc) Delete(token interface{}, postID uint) error {
+	userID := helper.ExtractToken(token)
+	if userID <= 0 {
+		return errors.New("user not found")
+	}
+
+	err := ps.data.Delete(postID, uint(userID))
+	if err != nil {
+		msg := ""
+		if strings.Contains(err.Error(), "not found") {
+			msg = "post not found"
+		} else {
+			msg = "server problem"
+		}
+		return errors.New(msg)
+	}
 	return nil
 }
 
