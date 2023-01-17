@@ -26,8 +26,9 @@ func main() {
 	e.Use(middleware.LoggerWithConfig(middleware.LoggerConfig{
 		Format: "method=${method}, uri=${uri}, status=${status}, error=${error}\n",
 	}))
-	// e.File("/", "files")
+	e.Static("/files", "./files")
 	e.POST("/register", userHdl.Register())
+	e.POST("/login", userHdl.Login())
 
 	if err := e.Start(":8000"); err != nil {
 		log.Println(err.Error())
