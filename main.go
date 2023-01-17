@@ -36,9 +36,10 @@ func main() {
 	e.Static("/files", "./files")
 	e.POST("/register", userHdl.Register())
 	e.POST("/login", userHdl.Login())
-  
+
 	e.GET("/users", userHdl.Profile(), middleware.JWT([]byte(config.JWT_KEY)))
-  
+	e.PUT("/users", userHdl.Update(), middleware.JWT([]byte(config.JWT_KEY)))
+
 	//posting
 	e.POST("/posts", postHdl.Add(), middleware.JWT([]byte(config.JWT_KEY)))
 	e.PUT("/posts/:id", postHdl.Update(), middleware.JWT([]byte(config.JWT_KEY)))
