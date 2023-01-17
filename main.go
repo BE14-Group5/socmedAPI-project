@@ -33,12 +33,14 @@ func main() {
 	e.Use(middleware.LoggerWithConfig(middleware.LoggerConfig{
 		Format: "method=${method}, uri=${uri}, status=${status}, error=${error}\n",
 	}))
-	e.Static("/files", "./files")
+	// e.Static("/files", "./files")
 	e.POST("/register", userHdl.Register())
 	e.POST("/login", userHdl.Login())
-  
+
 	e.GET("/users", userHdl.Profile(), middleware.JWT([]byte(config.JWT_KEY)))
-  
+	e.PUT("/users", userHdl.Update(), middleware.JWT([]byte(config.JWT_KEY)))
+	e.DELETE("/users", userHdl.Deactive(), middleware.JWT([]byte(config.JWT_KEY)))
+
 	//posting
 	e.POST("/posts", postHdl.Add(), middleware.JWT([]byte(config.JWT_KEY)))
 	e.PUT("/posts/:id", postHdl.Update(), middleware.JWT([]byte(config.JWT_KEY)))

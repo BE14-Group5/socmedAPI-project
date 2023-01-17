@@ -211,3 +211,130 @@ func TestProfile(t *testing.T) {
 		data.AssertExpectations(t)
 	})
 }
+
+func TestUpdate(t *testing.T) {
+	data := mocks.NewUserData(t)
+	updUser := user.Core{
+		Name:        "fauzan",
+		Email:       "mfauzanptra@gmail.com",
+		PhoneNumber: "085659171799",
+		Password:    "hahaha123",
+	}
+	t.Run("update success", func(t *testing.T) {
+		expectedData := user.Core{
+			Name:        "fauzan",
+			Email:       "mfauzanptra@gmail.com",
+			PhoneNumber: "085659171799",
+		}
+		data.On("Update", uint(1), mock.Anything).Return(expectedData, nil).Once()
+		srv := New(data)
+
+		_, token := helper.GenerateJWT(1)
+		pToken := token.(*jwt.Token)
+		pToken.Valid = true
+
+		res, err := srv.Update(pToken, updUser)
+		assert.Nil(t, err)
+		assert.Equal(t, expectedData.ID, res.ID)
+		assert.Equal(t, expectedData.Name, res.Name)
+		data.AssertExpectations(t)
+	})
+
+	t.Run("jwt not valid", func(t *testing.T) {
+		srv := New(data)
+
+		_, token := helper.GenerateJWT(1)
+
+		res, err := srv.Update(token, updUser)
+		assert.NotNil(t, err)
+		assert.ErrorContains(t, err, "token error")
+		assert.Equal(t, uint(0), res.ID)
+	})
+
+	t.Run("not found", func(t *testing.T) {
+		data.On("Update", uint(2), mock.Anything).Return(user.Core{}, errors.New("data tidak ditemukan")).Once()
+		srv := New(data)
+
+		_, token := helper.GenerateJWT(2)
+		pToken := token.(*jwt.Token)
+		pToken.Valid = true
+
+		res, err := srv.Update(pToken, updUser)
+		assert.NotNil(t, err)
+		assert.Equal(t, res.Name, "")
+		data.AssertExpectations(t)
+	})
+
+	t.Run("server problem", func(t *testing.T) {
+		data.On("Update", mock.Anything, mock.Anything).Return(user.Core{}, errors.New("terdapat masalah pada server")).Once()
+		srv := New(data)
+
+		_, token := helper.GenerateJWT(1)
+		pToken := token.(*jwt.Token)
+		pToken.Valid = true
+
+		res, err := srv.Update(pToken, updUser)
+		assert.NotNil(t, err)
+		assert.ErrorContains(t, err, "server")
+		assert.Equal(t, res.Name, "")
+		data.AssertExpectations(t)
+	})
+}
+
+func TestDeactive(t *testing.T) {
+	data := mocks.NewUserData(t)
+	t.Run("success delete", func(t *testing.T) {
+		data.On("Deactive", uint(1)).Return(nil).Once()
+
+		srv := New(data)
+
+		claims := jwt.MapClaims{}
+		claims["authorized"] = true
+		claims["userID"] = 1
+		claims["exp"] = time.Now().Add(time.Hour * 1).Unix() //Token expires after 1 hour
+		token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
+
+		token.Valid = true
+
+		err := srv.Deactive(token)
+		assert.Nil(t, err)
+		data.AssertExpectations(t)
+	})
+
+	t.Run("jwt not valid", func(t *testing.T) {
+		srv := New(data)
+
+		_, token := helper.GenerateJWT(1)
+
+		err := srv.Deactive(token)
+		assert.NotNil(t, err)
+		assert.ErrorContains(t, err, "not found")
+	})
+
+	t.Run("data not found", func(t *testing.T) {
+		data.On("Deactive", uint(4)).Return(errors.New("data not found")).Once()
+
+		srv := New(data)
+
+		_, token := helper.GenerateJWT(4)
+		pToken := token.(*jwt.Token)
+		pToken.Valid = true
+		err := srv.Deactive(pToken)
+		assert.NotNil(t, err)
+		assert.ErrorContains(t, err, "not found")
+		data.AssertExpectations(t)
+	})
+
+	t.Run("masalah di server", func(t *testing.T) {
+		data.On("Deactive", mock.Anything).Return(errors.New("terdapat masalah pada server")).Once()
+		srv := New(data)
+
+		_, token := helper.GenerateJWT(1)
+		pToken := token.(*jwt.Token)
+		pToken.Valid = true
+		err := srv.Deactive(pToken)
+		assert.NotNil(t, err)
+		assert.ErrorContains(t, err, "server")
+		data.AssertExpectations(t)
+	})
+}

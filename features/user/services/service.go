@@ -108,8 +108,42 @@ func (uuc *userUseCase) Profile(token interface{}) (user.Core, error) {
 	return res, nil
 }
 func (uuc *userUseCase) Update(token interface{}, updatedData user.Core) (user.Core, error) {
-	return user.Core{}, nil
+	userId := helper.ExtractToken(token)
+	if userId <= 0 {
+		log.Println("extract token error")
+		return user.Core{}, errors.New("extract token error")
+	}
+	if updatedData.Password != "" {
+		hashed, _ := bcrypt.GenerateFromPassword([]byte(updatedData.Password), bcrypt.DefaultCost)
+		updatedData.Password = string(hashed)
+	}
+	res, err := uuc.qry.Update(uint(userId), updatedData)
+	if err != nil {
+		errmsg := ""
+		if strings.Contains(err.Error(), "not found") {
+			errmsg = "data not found"
+		} else {
+			errmsg = "server problem"
+		}
+		log.Println("error update query: ", err.Error())
+		return user.Core{}, errors.New(errmsg)
+	}
+	return res, nil
 }
 func (uuc *userUseCase) Deactive(token interface{}) error {
+	userId := helper.ExtractToken(token)
+	if userId <= 0 {
+		return errors.New("data not found")
+	}
+	err := uuc.qry.Deactive(uint(userId))
+	if err != nil {
+		msg := ""
+		if strings.Contains(err.Error(), "not found") {
+			msg = "data not found"
+		} else {
+			msg = "server problem"
+		}
+		return errors.New(msg)
+	}
 	return nil
 }
