@@ -70,11 +70,12 @@ func (uuc *userUseCase) Login(email, password string) (string, user.Core, error)
 		} else {
 			errmsg = "server problem"
 		}
+		log.Println("error login query: ", err.Error())
 		return "", user.Core{}, errors.New(errmsg)
 	}
 
 	if err := bcrypt.CompareHashAndPassword([]byte(res.Password), []byte(password)); err != nil {
-		log.Println("wrong password ", err.Error())
+		log.Println("wrong password :", err.Error())
 		return "", user.Core{}, errors.New("wrong password")
 	}
 
@@ -90,6 +91,7 @@ func (uuc *userUseCase) Login(email, password string) (string, user.Core, error)
 func (uuc *userUseCase) Profile(token interface{}) (user.Core, error) {
 	id := helper.ExtractToken(token)
 	if id <= 0 {
+		log.Println("error extraxt token")
 		return user.Core{}, errors.New("data not found")
 	}
 	res, err := uuc.qry.Profile(uint(id))
@@ -100,6 +102,7 @@ func (uuc *userUseCase) Profile(token interface{}) (user.Core, error) {
 		} else {
 			errmsg = "server problem"
 		}
+		log.Println("error profile query: ", err.Error())
 		return user.Core{}, errors.New(errmsg)
 	}
 	return res, nil

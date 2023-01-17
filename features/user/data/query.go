@@ -22,11 +22,13 @@ func (uq *userQuery) Register(newUser user.Core) (user.Core, error) {
 	existed := 0
 	uq.db.Raw("SELECT COUNT(*) FROM users WHERE deleted_at IS NULL AND email = ?", newUser.Email).Scan(&existed)
 	if existed >= 1 {
+		log.Println("user already exist (duplicated)")
 		return user.Core{}, errors.New("user already exist (duplicated)")
 	}
 	cnv := CoreToData(newUser)
 	err := uq.db.Create(&cnv).Error
 	if err != nil {
+		log.Println("error create query: ", err.Error())
 		return user.Core{}, err
 	}
 
