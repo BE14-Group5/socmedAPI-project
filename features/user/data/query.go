@@ -55,7 +55,13 @@ func (uq *userQuery) Profile(id uint) (user.Core, error) {
 	return ToCore(res), nil
 }
 func (uq *userQuery) Update(id uint, updatedData user.Core) (user.Core, error) {
-	return user.Core{}, nil
+	cnvUpd := CoreToData(updatedData)
+	qry := uq.db.Model(&User{}).Where("id = ?", id).Updates(cnvUpd)
+	if err := qry.Error; err != nil {
+		log.Println("error update user query : ", err)
+		return updatedData, err
+	}
+	return updatedData, nil
 }
 func (uq *userQuery) Deactive(id uint) error {
 	return nil
