@@ -7,11 +7,11 @@ import (
 )
 
 type Core struct {
-	ID     uint
-	Body   string
-	Image  string
-	UserID uint
-	Writer string
+	ID      uint
+	Content string
+	Photo   string
+	UserID  uint
+	Writer  string
 }
 
 type PostHandler interface {
