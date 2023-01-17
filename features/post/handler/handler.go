@@ -6,6 +6,7 @@ import (
 	"net/http"
 	"simple-social-media-API/features/post"
 	"simple-social-media-API/helper"
+	"strconv"
 
 	"github.com/labstack/echo/v4"
 )
@@ -51,7 +52,41 @@ func (ph *postHandle) Add() echo.HandlerFunc {
 }
 
 func (ph *postHandle) Update() echo.HandlerFunc {
-	return nil
+	return func(c echo.Context) error {
+		token := c.Get("user")
+		var updatePhoto *multipart.FileHeader
+
+		postID := c.Param("id")
+		cnv, err := strconv.Atoi(postID)
+		if err != nil {
+			log.Println("update post param error")
+			return c.JSON(http.StatusBadRequest, "id post salah")
+		}
+
+		input := UpdatePostRequest{}
+		err2 := c.Bind(&input)
+		if err2 != nil {
+			log.Println("update post body scan error")
+			return c.JSON(http.StatusBadRequest, "format inputan salah")
+		}
+
+		if file, err := c.FormFile("image"); err != nil {
+			log.Println("error read image")
+			return c.JSON(http.StatusBadRequest, helper.ErrorResponse("wrong image input"))
+		} else {
+			updatePhoto = file
+		}
+
+		res, err := ph.srvc.Update(token, uint(cnv), *ToCore(input), updatePhoto)
+		if err != nil {
+			log.Println("error running update post service")
+			return c.JSON(http.StatusInternalServerError, helper.ErrorResponse("server problem"))
+		}
+		return c.JSON(http.StatusCreated, map[string]interface{}{
+			"data":    UpdatePostToResponse(res),
+			"message": "success posting",
+		})
+	}
 }
 
 func (ph *postHandle) Delete() echo.HandlerFunc {

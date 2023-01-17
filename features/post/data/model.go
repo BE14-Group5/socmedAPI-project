@@ -8,23 +8,23 @@ import (
 
 type Post struct {
 	gorm.Model
-	Body   string
-	Image  string
-	UserID uint
+	Content string
+	Photo   string
+	UserID  uint
 }
 
 func DataToCore(data Post) post.Core {
 	return post.Core{
-		ID:    data.ID,
-		Body:  data.Body,
-		Image: data.Image,
+		ID:      data.ID,
+		Content: data.Content,
+		Photo:   data.Photo,
 	}
 }
 
 func CoreToData(data post.Core) Post {
 	return Post{
-		Model: gorm.Model{ID: data.ID},
-		Body:  data.Body,
-		Image: data.Image,
+		Model:   gorm.Model{ID: data.ID},
+		Content: data.Content,
+		Photo:   data.Photo,
 	}
 }

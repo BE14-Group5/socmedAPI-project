@@ -21,7 +21,7 @@ func Isolation(d post.PostData) post.PostService {
 func (ps *postSrvc) Add(token interface{}, newPost post.Core, postPhoto *multipart.FileHeader) (post.Core, error) {
 	userID := helper.ExtractToken(token)
 	if userID <= 0 {
-		return post.Core{}, errors.New("user tidak ditemukan")
+		return post.Core{}, errors.New("user not found")
 	}
 
 	if postPhoto != nil {
@@ -29,16 +29,16 @@ func (ps *postSrvc) Add(token interface{}, newPost post.Core, postPhoto *multipa
 		if err != nil {
 			return post.Core{}, err
 		}
-		newPost.Image = path
+		newPost.Photo = path
 	}
 
 	res, err := ps.data.Add(uint(userID), newPost)
 	if err != nil {
 		msg := ""
 		if strings.Contains(err.Error(), "not found") {
-			msg = "postingan tidak ditemukan"
+			msg = "post not found"
 		} else {
-			msg = "terjadi kesalahan pada server"
+			msg = "server problem"
 		}
 		return post.Core{}, errors.New(msg)
 	}
@@ -47,7 +47,30 @@ func (ps *postSrvc) Add(token interface{}, newPost post.Core, postPhoto *multipa
 }
 
 func (ps *postSrvc) Update(token interface{}, postID uint, updatedPost post.Core, updatePhoto *multipart.FileHeader) (post.Core, error) {
-	return post.Core{}, nil
+	userID := helper.ExtractToken(token)
+	if userID <= 0 {
+		return post.Core{}, errors.New("user not found")
+	}
+
+	if updatePhoto != nil {
+		path, err := helper.UploadPostPhotoS3(*updatePhoto, helper.ExtractToken(token))
+		if err != nil {
+			return post.Core{}, err
+		}
+		updatedPost.Photo = path
+	}
+
+	res, err := ps.data.Update(postID, uint(userID), updatedPost)
+	if err != nil {
+		msg := ""
+		if strings.Contains(err.Error(), "not found") {
+			msg = "post data not found"
+		} else {
+			msg = "server problem"
+		}
+		return post.Core{}, errors.New(msg)
+	}
+	return res, nil
 }
 
 func (ps *postSrvc) Delete(token interface{}, postID uint) error {
