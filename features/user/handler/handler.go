@@ -160,5 +160,18 @@ func (uc *userControl) Update() echo.HandlerFunc {
 	}
 }
 func (uc *userControl) Deactive() echo.HandlerFunc {
-	return nil
+	return func(c echo.Context) error {
+		token := c.Get("user")
+		err := uc.srv.Deactive(token)
+		if err != nil {
+			if strings.Contains(err.Error(), "not found") {
+				c.JSON(http.StatusNotFound, helper.ErrorResponse("user not found"))
+			} else {
+				c.JSON(http.StatusInternalServerError, helper.ErrorResponse("server problem"))
+			}
+		}
+		return c.JSON(http.StatusOK, map[string]interface{}{
+			"message": "success delete user",
+		})
+	}
 }

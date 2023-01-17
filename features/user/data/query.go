@@ -64,5 +64,14 @@ func (uq *userQuery) Update(id uint, updatedData user.Core) (user.Core, error) {
 	return updatedData, nil
 }
 func (uq *userQuery) Deactive(id uint) error {
+	user := User{}
+	qry := uq.db.Where("id = ?", id).Delete(&user)
+	if affrows := qry.RowsAffected; affrows <= 0 {
+		return errors.New("user doesn't exist")
+	}
+	if err := qry.Error; err != nil {
+		log.Println(err)
+		return err
+	}
 	return nil
 }

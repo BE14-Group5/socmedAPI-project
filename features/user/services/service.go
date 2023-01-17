@@ -131,5 +131,19 @@ func (uuc *userUseCase) Update(token interface{}, updatedData user.Core) (user.C
 	return res, nil
 }
 func (uuc *userUseCase) Deactive(token interface{}) error {
+	userId := helper.ExtractToken(token)
+	if userId <= 0 {
+		return errors.New("data not found")
+	}
+	err := uuc.qry.Deactive(uint(userId))
+	if err != nil {
+		msg := ""
+		if strings.Contains(err.Error(), "not found") {
+			msg = "data not found"
+		} else {
+			msg = "server problem"
+		}
+		return errors.New(msg)
+	}
 	return nil
 }
