@@ -24,7 +24,7 @@ type PostHandler interface {
 
 type PostService interface {
 	Add(token interface{}, newPost Core, postPhoto *multipart.FileHeader) (Core, error)
-	Update(token interface{}, postID uint, updatedPost Core) (Core, error)
+	Update(token interface{}, postID uint, updatedPost Core, updatePhoto *multipart.FileHeader) (Core, error)
 	Delete(token interface{}, postID uint) error
 	MyPosts(token interface{}) ([]Core, error)
 	AllPosts() ([]Core, error)

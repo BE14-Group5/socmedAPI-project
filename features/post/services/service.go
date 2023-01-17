@@ -46,7 +46,7 @@ func (ps *postSrvc) Add(token interface{}, newPost post.Core, postPhoto *multipa
 	return res, nil
 }
 
-func (ps *postSrvc) Update(token interface{}, postID uint, updatedPost post.Core) (post.Core, error) {
+func (ps *postSrvc) Update(token interface{}, postID uint, updatedPost post.Core, updatePhoto *multipart.FileHeader) (post.Core, error) {
 	return post.Core{}, nil
 }
 
