@@ -17,10 +17,10 @@ func ExtractToken(t interface{}) int {
 		case int:
 			userId = claims["userID"].(int)
 		}
+		return int(userId)
 	}
-	return userId
+	return -1
 }
-
 func GenerateJWT(id int) (string, interface{}) {
 	claims := jwt.MapClaims{}
 	claims["authorized"] = true
