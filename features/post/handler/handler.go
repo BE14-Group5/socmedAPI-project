@@ -90,7 +90,23 @@ func (ph *postHandle) Update() echo.HandlerFunc {
 }
 
 func (ph *postHandle) Delete() echo.HandlerFunc {
-	return nil
+	return func(c echo.Context) error {
+		token := c.Get("user")
+		input := c.Param("id")
+		cnv, err := strconv.Atoi(input)
+		if err != nil {
+			log.Println("delete post param error")
+			return c.JSON(http.StatusBadRequest, "id post salah")
+		}
+
+		err2 := ph.srvc.Delete(token, uint(cnv))
+		if err2 != nil {
+			log.Println("error running update post service")
+			return c.JSON(http.StatusInternalServerError, helper.ErrorResponse("server problem"))
+		}
+
+		return c.JSON(http.StatusOK, "berhasil menghapus postingan")
+	}
 }
 
 func (ph *postHandle) MyPosts() echo.HandlerFunc {
