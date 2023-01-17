@@ -2,6 +2,7 @@ package handler
 
 import (
 	"log"
+	"mime/multipart"
 	"net/http"
 	"simple-social-media-API/features/post"
 	"simple-social-media-API/helper"
@@ -23,6 +24,7 @@ func (ph *postHandle) Add() echo.HandlerFunc {
 	return func(c echo.Context) error {
 		token := c.Get("user")
 		input := AddPostRequest{}
+		var postPhoto *multipart.FileHeader
 		if err := c.Bind(&input); err != nil {
 			log.Println("add post body scan error")
 			return c.JSON(http.StatusBadRequest, "format inputan salah")
@@ -32,15 +34,10 @@ func (ph *postHandle) Add() echo.HandlerFunc {
 			log.Println("error read image")
 			return c.JSON(http.StatusBadRequest, helper.ErrorResponse("wrong image input"))
 		} else {
-			dir, err := helper.UploadPostPhotoS3(*file, helper.ExtractToken(token))
-			if err != nil {
-				log.Println("error running UploadPostImage")
-				return c.JSON(http.StatusInternalServerError, helper.ErrorResponse("server problem"))
-			}
-			input.Image = dir
+			postPhoto = file
 		}
 
-		res, err := ph.srvc.Add(token, *ToCore(input))
+		res, err := ph.srvc.Add(token, *ToCore(input), postPhoto)
 		if err != nil {
 			log.Println("error running add post service")
 			return c.JSON(http.StatusInternalServerError, helper.ErrorResponse("server problem"))
