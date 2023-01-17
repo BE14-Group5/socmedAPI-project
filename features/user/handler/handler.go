@@ -110,7 +110,23 @@ func (uc *userControl) Login() echo.HandlerFunc {
 	}
 }
 func (uc *userControl) Profile() echo.HandlerFunc {
-	return nil
+	return func(c echo.Context) error {
+		token := c.Get("user")
+
+		res, err := uc.srv.Profile(token)
+		if err != nil {
+			if strings.Contains(err.Error(), "not found") {
+				return c.JSON(http.StatusNotFound, helper.ErrorResponse("user not found"))
+			} else {
+				return c.JSON(http.StatusInternalServerError, helper.ErrorResponse("server problem"))
+			}
+		}
+
+		return c.JSON(http.StatusOK, map[string]interface{}{
+			"data":    ToResponse(res),
+			"message": "get profile success",
+		})
+	}
 }
 func (uc *userControl) Deactive() echo.HandlerFunc {
 	return nil

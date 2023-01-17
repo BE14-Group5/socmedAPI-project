@@ -44,7 +44,13 @@ func (uq *userQuery) Login(email string) (user.Core, error) {
 	return ToCore(res), nil
 }
 func (uq *userQuery) Profile(id uint) (user.Core, error) {
-	return user.Core{}, nil
+	res := User{}
+	if err := uq.db.Where("id = ?", id).First(&res).Error; err != nil {
+		log.Println("Get By ID query error", err.Error())
+		return user.Core{}, err
+	}
+
+	return ToCore(res), nil
 }
 func (uq *userQuery) Update(id uint, updatedData user.Core) (user.Core, error) {
 	return user.Core{}, nil
