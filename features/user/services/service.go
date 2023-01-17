@@ -2,12 +2,16 @@ package services
 
 import (
 	"errors"
+	"log"
 	"mime/multipart"
+	"simple-social-media-API/config"
 	"simple-social-media-API/features/user"
 	"simple-social-media-API/helper"
 	"strings"
+	"time"
 
 	"github.com/go-playground/validator/v10"
+	"github.com/golang-jwt/jwt"
 	"golang.org/x/crypto/bcrypt"
 )
 
@@ -57,7 +61,31 @@ func (uuc *userUseCase) Register(newUser user.Core, profilePhoto *multipart.File
 	return res, nil
 }
 func (uuc *userUseCase) Login(email, password string) (string, user.Core, error) {
-	return "", user.Core{}, nil
+	res, err := uuc.qry.Login(email)
+
+	if err != nil {
+		errmsg := ""
+		if strings.Contains(err.Error(), "not found") {
+			errmsg = err.Error()
+		} else {
+			errmsg = "server problem"
+		}
+		return "", user.Core{}, errors.New(errmsg)
+	}
+
+	if err := bcrypt.CompareHashAndPassword([]byte(res.Password), []byte(password)); err != nil {
+		log.Println("wrong password ", err.Error())
+		return "", user.Core{}, errors.New("wrong password")
+	}
+
+	claims := jwt.MapClaims{}
+	claims["authorized"] = true
+	claims["userID"] = res.ID
+	claims["exp"] = time.Now().Add(time.Hour * 1).Unix() //Token expires after 1 hour
+	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
+	useToken, _ := token.SignedString([]byte(config.JWT_KEY))
+
+	return useToken, res, nil
 }
 func (uuc *userUseCase) Profile(token interface{}) (user.Core, error) {
 	return user.Core{}, nil
