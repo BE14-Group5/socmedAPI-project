@@ -56,6 +56,7 @@ func main() {
 	e.GET("/posts/:id", postHdl.GetPostById(), middleware.JWT([]byte(config.JWT_KEY)))
 	e.GET("/allposts", postHdl.AllPosts())
 
+	e.GET("/comments", commentHdl.GetComments())
 	e.POST("/comments", commentHdl.Add(), middleware.JWT([]byte(config.JWT_KEY)))
 
 	if err := e.Start(":8000"); err != nil {
