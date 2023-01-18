@@ -108,7 +108,7 @@ func (ph *postHandle) Delete() echo.HandlerFunc {
 			return c.JSON(http.StatusInternalServerError, helper.ErrorResponse("server problem"))
 		}
 
-		return c.JSON(http.StatusOK, "berhasil menghapus postingan")
+		return c.JSON(http.StatusOK, "success delete post")
 	}
 }
 
@@ -123,11 +123,23 @@ func (ph *postHandle) MyPosts() echo.HandlerFunc {
 
 		return c.JSON(http.StatusCreated, map[string]interface{}{
 			"data":    ListMyPostsToResponse(res),
-			"message": "success update post",
+			"message": "success show all my posts post",
 		})
 	}
 }
 
 func (ph *postHandle) AllPosts() echo.HandlerFunc {
-	return nil
+	return func(c echo.Context) error {
+
+		res, err := ph.srvc.AllPosts()
+		if err != nil {
+			log.Println("error running myposts service")
+			return c.JSON(http.StatusInternalServerError, helper.ErrorResponse("server problem"))
+		}
+
+		return c.JSON(http.StatusCreated, map[string]interface{}{
+			"data":    ListAllPostsToResponse(res),
+			"message": "success show all users posts",
+		})
+	}
 }

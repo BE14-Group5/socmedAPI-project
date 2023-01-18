@@ -111,5 +111,15 @@ func (ps *postSrvc) MyPosts(token interface{}) ([]post.Core, error) {
 }
 
 func (ps *postSrvc) AllPosts() ([]post.Core, error) {
-	return []post.Core{}, nil
+	res, err := ps.data.AllPosts()
+	if err != nil {
+		msg := ""
+		if strings.Contains(err.Error(), "not found") {
+			msg = "data not found"
+		} else {
+			msg = "server problem"
+		}
+		return []post.Core{}, errors.New(msg)
+	}
+	return res, nil
 }

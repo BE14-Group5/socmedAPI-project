@@ -46,3 +46,28 @@ func ListModelsToCore(dataModels []Post) []post.Core {
 	}
 	return dataCore
 }
+
+// For All Posts
+type PostWriter struct {
+	ID      uint
+	Content string
+	Photo   string
+	Writer  string
+}
+
+func (dataModel *PostWriter) AllModelsToCore() post.Core {
+	return post.Core{
+		ID:      dataModel.ID,
+		Content: dataModel.Content,
+		Photo:   dataModel.Photo,
+		Writer:  dataModel.Writer,
+	}
+}
+
+func ListAllModelsToCore(dataModels []PostWriter) []post.Core {
+	var dataCore []post.Core
+	for _, value := range dataModels {
+		dataCore = append(dataCore, value.AllModelsToCore())
+	}
+	return dataCore
+}
