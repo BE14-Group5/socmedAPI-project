@@ -37,15 +37,15 @@ func (_m *PostService) Add(token interface{}, newPost post.Core, postPhoto *mult
 }
 
 // AllPosts provides a mock function with given fields:
-func (_m *PostService) AllPosts() ([]post.Core, error) {
+func (_m *PostService) AllPosts() ([]post.MyPostsResp, error) {
 	ret := _m.Called()
 
-	var r0 []post.Core
-	if rf, ok := ret.Get(0).(func() []post.Core); ok {
+	var r0 []post.MyPostsResp
+	if rf, ok := ret.Get(0).(func() []post.MyPostsResp); ok {
 		r0 = rf()
 	} else {
 		if ret.Get(0) != nil {
-			r0 = ret.Get(0).([]post.Core)
+			r0 = ret.Get(0).([]post.MyPostsResp)
 		}
 	}
 
@@ -74,14 +74,14 @@ func (_m *PostService) Delete(token interface{}, postID uint) error {
 }
 
 // GetPostById provides a mock function with given fields: token, postID
-func (_m *PostService) GetPostById(token interface{}, postID uint) (post.Core, error) {
+func (_m *PostService) GetPostById(token interface{}, postID uint) (post.MyPostsResp, error) {
 	ret := _m.Called(token, postID)
 
-	var r0 post.Core
-	if rf, ok := ret.Get(0).(func(interface{}, uint) post.Core); ok {
+	var r0 post.MyPostsResp
+	if rf, ok := ret.Get(0).(func(interface{}, uint) post.MyPostsResp); ok {
 		r0 = rf(token, postID)
 	} else {
-		r0 = ret.Get(0).(post.Core)
+		r0 = ret.Get(0).(post.MyPostsResp)
 	}
 
 	var r1 error

@@ -137,7 +137,7 @@ func (ph *postHandle) AllPosts() echo.HandlerFunc {
 		}
 
 		return c.JSON(http.StatusCreated, map[string]interface{}{
-			"data":    ListAllPostsToResponse(res),
+			"data":    res,
 			"message": "success show all users posts",
 		})
 	}
@@ -160,7 +160,7 @@ func (ph *postHandle) GetPostById() echo.HandlerFunc {
 		}
 
 		return c.JSON(http.StatusCreated, map[string]interface{}{
-			"data":    GetPostByIdToResponse(res),
+			"data":    res,
 			"message": "success get post",
 		})
 	}
