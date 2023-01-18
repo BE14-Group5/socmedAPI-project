@@ -118,7 +118,7 @@ func UploadPostPhotoS3(file multipart.FileHeader, userID int) (string, error) {
 	if err != nil {
 		return "", errors.New("problem with upload post photo")
 	}
-	path := "files/post/" + cnv + "/post-photo" + ext
+	path := ObjectURL + "files/post/" + cnv + "/post-photo" + ext
 	return path, nil
 }
 
