@@ -40,3 +40,67 @@ func UpdatePostToResponse(dataCore post.Core) UpdatePostResponse {
 		Photo:   dataCore.Photo,
 	}
 }
+
+// For MyPosts
+type MyPostsResponse struct {
+	ID      uint   `json:"id"`
+	Content string `json:"content"`
+	Photo   string `json:"photo"`
+}
+
+func MyPostsToResponse(dataCore post.Core) MyPostsResponse {
+	return MyPostsResponse{
+		ID:      dataCore.ID,
+		Content: dataCore.Content,
+		Photo:   dataCore.Photo,
+	}
+}
+
+func ListMyPostsToResponse(dataCore []post.Core) []MyPostsResponse {
+	var DataResponse []MyPostsResponse
+
+	for _, value := range dataCore {
+		DataResponse = append(DataResponse, MyPostsToResponse(value))
+	}
+	return DataResponse
+}
+
+// For AllPosts
+type AllPostResponse struct {
+	ID      uint   `json:"id"`
+	Content string `json:"content"`
+	Photo   string `json:"photo"`
+	Writer  string `json:"writer"`
+}
+
+// For AllPosts
+func AllPostsToResponse(dataCore post.Core) AllPostResponse {
+	return AllPostResponse{
+		ID:      dataCore.ID,
+		Content: dataCore.Content,
+		Photo:   dataCore.Photo,
+		Writer:  dataCore.Writer,
+	}
+}
+func ListAllPostsToResponse(dataCore []post.Core) []AllPostResponse {
+	var DataResponse []AllPostResponse
+
+	for _, value := range dataCore {
+		DataResponse = append(DataResponse, AllPostsToResponse(value))
+	}
+	return DataResponse
+}
+
+type GetPostByIdResponse struct {
+	ID      uint   `json:"id"`
+	Content string `json:"content"`
+	Photo   string `json:"photo"`
+}
+
+func GetPostByIdToResponse(dataCore post.Core) GetPostByIdResponse {
+	return GetPostByIdResponse{
+		ID:      dataCore.ID,
+		Content: dataCore.Content,
+		Photo:   dataCore.Photo,
+	}
+}

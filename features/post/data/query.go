@@ -70,9 +70,37 @@ func (pd *postData) Delete(postID uint, userID uint) error {
 }
 
 func (pd *postData) MyPosts(userID uint) ([]post.Core, error) {
-	return []post.Core{}, nil
+	myPosts := []Post{}
+	err := pd.db.Raw("SELECT posts.id, posts.content, posts.photo FROM posts WHERE posts.deleted_at is NULL AND user_id = ?", userID).Find(&myPosts).Error
+	if err != nil {
+		log.Println("my book query error")
+		return []post.Core{}, errors.New("data not found")
+	}
+	listMyPosts := ListModelsToCore(myPosts)
+
+	return listMyPosts, nil
 }
 
 func (pd *postData) AllPosts() ([]post.Core, error) {
-	return []post.Core{}, nil
+	allPosts := []PostWriter{}
+	err := pd.db.Raw("SELECT posts.id, posts.content, posts.photo, users.name as writer FROM posts JOIN users on users.id = posts.user_id WHERE posts.deleted_at is NULL").Find(&allPosts).Error
+	if err != nil {
+		log.Println("all book query error")
+		return []post.Core{}, err
+	}
+
+	listAllPosts := ListAllModelsToCore(allPosts)
+
+	return listAllPosts, nil
+}
+
+func (pd *postData) GetPostById(postID uint, userID uint) (post.Core, error) {
+	res := Post{}
+	err := pd.db.Where("id = ? AND user_id = ?", postID, userID).Find(&res).Error
+	if err != nil {
+		log.Println("GetPostById query error")
+		return post.Core{}, err
+	}
+
+	return DataToCore(res), nil
 }
