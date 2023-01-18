@@ -2,7 +2,6 @@ package service
 
 import (
 	"errors"
-	"log"
 	"mime/multipart"
 	"simple-social-media-API/features/post"
 	"simple-social-media-API/helper"
@@ -71,7 +70,7 @@ func (ps *postSrvc) Update(token interface{}, postID uint, updatedPost post.Core
 		}
 		return post.Core{}, errors.New(msg)
 	}
-	log.Println("update di service", res.ID)
+
 	return res, nil
 }
 
@@ -120,6 +119,21 @@ func (ps *postSrvc) AllPosts() ([]post.Core, error) {
 			msg = "server problem"
 		}
 		return []post.Core{}, errors.New(msg)
+	}
+	return res, nil
+}
+
+func (ps *postSrvc) GetPostById(token interface{}, postID uint) (post.Core, error) {
+	userID := helper.ExtractToken(token)
+	res, err := ps.data.GetPostById(postID, uint(userID))
+	if err != nil {
+		msg := ""
+		if strings.Contains(err.Error(), "not found") {
+			msg = "data not found"
+		} else {
+			msg = "server problem"
+		}
+		return post.Core{}, errors.New(msg)
 	}
 	return res, nil
 }

@@ -41,6 +41,7 @@ func UpdatePostToResponse(dataCore post.Core) UpdatePostResponse {
 	}
 }
 
+// For MyPosts
 type MyPostsResponse struct {
 	ID      uint   `json:"id"`
 	Content string `json:"content"`
@@ -64,6 +65,7 @@ func ListMyPostsToResponse(dataCore []post.Core) []MyPostsResponse {
 	return DataResponse
 }
 
+// For AllPosts
 type AllPostResponse struct {
 	ID      uint   `json:"id"`
 	Content string `json:"content"`
@@ -87,4 +89,18 @@ func ListAllPostsToResponse(dataCore []post.Core) []AllPostResponse {
 		DataResponse = append(DataResponse, AllPostsToResponse(value))
 	}
 	return DataResponse
+}
+
+type GetPostByIdResponse struct {
+	ID      uint   `json:"id"`
+	Content string `json:"content"`
+	Photo   string `json:"photo"`
+}
+
+func GetPostByIdToResponse(dataCore post.Core) GetPostByIdResponse {
+	return GetPostByIdResponse{
+		ID:      dataCore.ID,
+		Content: dataCore.Content,
+		Photo:   dataCore.Photo,
+	}
 }

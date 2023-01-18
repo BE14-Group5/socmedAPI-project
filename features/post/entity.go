@@ -20,6 +20,7 @@ type PostHandler interface {
 	Delete() echo.HandlerFunc
 	MyPosts() echo.HandlerFunc
 	AllPosts() echo.HandlerFunc
+	GetPostById() echo.HandlerFunc
 }
 
 type PostService interface {
@@ -28,6 +29,7 @@ type PostService interface {
 	Delete(token interface{}, postID uint) error
 	MyPosts(token interface{}) ([]Core, error)
 	AllPosts() ([]Core, error)
+	GetPostById(token interface{}, postID uint) (Core, error)
 }
 
 type PostData interface {
@@ -36,4 +38,5 @@ type PostData interface {
 	Delete(postID uint, userID uint) error
 	MyPosts(userID uint) ([]Core, error)
 	AllPosts() ([]Core, error)
+	GetPostById(postID uint, userID uint) (Core, error)
 }

@@ -93,3 +93,14 @@ func (pd *postData) AllPosts() ([]post.Core, error) {
 
 	return listAllPosts, nil
 }
+
+func (pd *postData) GetPostById(postID uint, userID uint) (post.Core, error) {
+	res := Post{}
+	err := pd.db.Where("id = ? AND user_id = ?", postID, userID).Find(&res).Error
+	if err != nil {
+		log.Println("GetPostById query error")
+		return post.Core{}, err
+	}
+
+	return DataToCore(res), nil
+}
