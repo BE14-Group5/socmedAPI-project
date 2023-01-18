@@ -48,13 +48,13 @@ func (_m *CommentData) Delete(userId uint, postId uint, commentId uint) error {
 	return r0
 }
 
-// GetComments provides a mock function with given fields:
-func (_m *CommentData) GetComments() ([]comment.Core, error) {
-	ret := _m.Called()
+// GetComments provides a mock function with given fields: postId
+func (_m *CommentData) GetComments(postId uint) ([]comment.Core, error) {
+	ret := _m.Called(postId)
 
 	var r0 []comment.Core
-	if rf, ok := ret.Get(0).(func() []comment.Core); ok {
-		r0 = rf()
+	if rf, ok := ret.Get(0).(func(uint) []comment.Core); ok {
+		r0 = rf(postId)
 	} else {
 		if ret.Get(0) != nil {
 			r0 = ret.Get(0).([]comment.Core)
@@ -62,8 +62,8 @@ func (_m *CommentData) GetComments() ([]comment.Core, error) {
 	}
 
 	var r1 error
-	if rf, ok := ret.Get(1).(func() error); ok {
-		r1 = rf()
+	if rf, ok := ret.Get(1).(func(uint) error); ok {
+		r1 = rf(postId)
 	} else {
 		r1 = ret.Error(1)
 	}

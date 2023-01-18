@@ -121,7 +121,7 @@ func (ph *postHandle) MyPosts() echo.HandlerFunc {
 		}
 
 		return c.JSON(http.StatusCreated, map[string]interface{}{
-			"data":    ListMyPostsToResponse(res),
+			"data":    res,
 			"message": "success show all my posts post",
 		})
 	}

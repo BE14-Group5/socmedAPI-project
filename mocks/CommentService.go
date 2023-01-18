@@ -13,20 +13,20 @@ type CommentService struct {
 	mock.Mock
 }
 
-// Add provides a mock function with given fields: token, newComment, postId
-func (_m *CommentService) Add(token interface{}, newComment comment.Core, postId uint) (comment.Core, error) {
-	ret := _m.Called(token, newComment, postId)
+// Add provides a mock function with given fields: token, newComment
+func (_m *CommentService) Add(token interface{}, newComment comment.Core) (comment.Core, error) {
+	ret := _m.Called(token, newComment)
 
 	var r0 comment.Core
-	if rf, ok := ret.Get(0).(func(interface{}, comment.Core, uint) comment.Core); ok {
-		r0 = rf(token, newComment, postId)
+	if rf, ok := ret.Get(0).(func(interface{}, comment.Core) comment.Core); ok {
+		r0 = rf(token, newComment)
 	} else {
 		r0 = ret.Get(0).(comment.Core)
 	}
 
 	var r1 error
-	if rf, ok := ret.Get(1).(func(interface{}, comment.Core, uint) error); ok {
-		r1 = rf(token, newComment, postId)
+	if rf, ok := ret.Get(1).(func(interface{}, comment.Core) error); ok {
+		r1 = rf(token, newComment)
 	} else {
 		r1 = ret.Error(1)
 	}
@@ -48,13 +48,13 @@ func (_m *CommentService) Delete(token interface{}, postId uint, commentId uint)
 	return r0
 }
 
-// GetComments provides a mock function with given fields:
-func (_m *CommentService) GetComments() ([]comment.Core, error) {
-	ret := _m.Called()
+// GetComments provides a mock function with given fields: postId
+func (_m *CommentService) GetComments(postId uint) ([]comment.Core, error) {
+	ret := _m.Called(postId)
 
 	var r0 []comment.Core
-	if rf, ok := ret.Get(0).(func() []comment.Core); ok {
-		r0 = rf()
+	if rf, ok := ret.Get(0).(func(uint) []comment.Core); ok {
+		r0 = rf(postId)
 	} else {
 		if ret.Get(0) != nil {
 			r0 = ret.Get(0).([]comment.Core)
@@ -62,8 +62,8 @@ func (_m *CommentService) GetComments() ([]comment.Core, error) {
 	}
 
 	var r1 error
-	if rf, ok := ret.Get(1).(func() error); ok {
-		r1 = rf()
+	if rf, ok := ret.Get(1).(func(uint) error); ok {
+		r1 = rf(postId)
 	} else {
 		r1 = ret.Error(1)
 	}

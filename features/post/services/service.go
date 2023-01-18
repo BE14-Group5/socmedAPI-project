@@ -101,7 +101,7 @@ func (ps *postSrvc) Delete(token interface{}, postID uint) error {
 	return nil
 }
 
-func (ps *postSrvc) MyPosts(token interface{}) ([]post.Core, error) {
+func (ps *postSrvc) MyPosts(token interface{}) ([]post.MyPostsResp, error) {
 	userID := helper.ExtractToken(token)
 
 	res, err := ps.data.MyPosts(uint(userID))
@@ -112,7 +112,7 @@ func (ps *postSrvc) MyPosts(token interface{}) ([]post.Core, error) {
 		} else {
 			msg = "server problem"
 		}
-		return []post.Core{}, errors.New(msg)
+		return []post.MyPostsResp{}, errors.New(msg)
 	}
 	return res, nil
 }
