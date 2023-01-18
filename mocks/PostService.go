@@ -95,15 +95,15 @@ func (_m *PostService) GetPostById(token interface{}, postID uint) (post.Core, e
 }
 
 // MyPosts provides a mock function with given fields: token
-func (_m *PostService) MyPosts(token interface{}) ([]post.Core, error) {
+func (_m *PostService) MyPosts(token interface{}) ([]post.MyPostsResp, error) {
 	ret := _m.Called(token)
 
-	var r0 []post.Core
-	if rf, ok := ret.Get(0).(func(interface{}) []post.Core); ok {
+	var r0 []post.MyPostsResp
+	if rf, ok := ret.Get(0).(func(interface{}) []post.MyPostsResp); ok {
 		r0 = rf(token)
 	} else {
 		if ret.Get(0) != nil {
-			r0 = ret.Get(0).([]post.Core)
+			r0 = ret.Get(0).([]post.MyPostsResp)
 		}
 	}
 

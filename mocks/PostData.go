@@ -93,15 +93,15 @@ func (_m *PostData) GetPostById(postID uint, userID uint) (post.Core, error) {
 }
 
 // MyPosts provides a mock function with given fields: userID
-func (_m *PostData) MyPosts(userID uint) ([]post.Core, error) {
+func (_m *PostData) MyPosts(userID uint) ([]post.MyPostsResp, error) {
 	ret := _m.Called(userID)
 
-	var r0 []post.Core
-	if rf, ok := ret.Get(0).(func(uint) []post.Core); ok {
+	var r0 []post.MyPostsResp
+	if rf, ok := ret.Get(0).(func(uint) []post.MyPostsResp); ok {
 		r0 = rf(userID)
 	} else {
 		if ret.Get(0) != nil {
-			r0 = ret.Get(0).([]post.Core)
+			r0 = ret.Get(0).([]post.MyPostsResp)
 		}
 	}
 
