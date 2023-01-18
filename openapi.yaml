@@ -27,7 +27,7 @@ paths:
       summary: register new user
       requestBody:
         content:
-          application/json:
+          multipart/form-data:
             schema:
               type: object
               properties:
@@ -43,8 +43,10 @@ paths:
                   format: password
                 profile_photo:
                   type: string
+                  format: binary
                 background_photo:
                   type: string
+                  format: binary
             example:
               email: "putra123@gmail.com"
               name: "Putra"
@@ -104,7 +106,7 @@ paths:
                   phone_number: "08123456789"
                   profile_photo: "profile_photo.png"
                   background_photo: "background_photo.png"
-                token: "dfeft434r34t3t"
+                  token: "dfeft434r34t3t"
                 message: "success login"
         401:
           description: "wrong password"
@@ -130,18 +132,14 @@ paths:
                 message: "wrong email"
         500:
           $ref: '#/components/responses/500'
-  /users/{id}:
+  /users:
     get:
       tags:
         - "Users"
       description: "digunakan untuk melihat profil user berdasarkan ID"
       summary: "user's profile"
-      parameters:
-        - name: id
-          in: path
-          required: true
-          schema:
-            type: integer
+      security:
+        - bearerAuth: [Alt3rra]
       responses:
         200:
           description: "sukses menampilkan data user"
@@ -173,9 +171,11 @@ paths:
         - "Users"
       description: digunakan untuk memperbarui data pengguna
       summary: update user's data
+      security:
+        - bearerAuth: [Alt3rra]
       requestBody:
         content:
-          application/json:
+          multipart/form-data:
             schema:
               type: object
               properties:
@@ -191,8 +191,10 @@ paths:
                   format: password
                 profile_photo:
                   type: string
+                  format: binary
                 background_photo:
                   type: string
+                  format: binary
             example:
               id: 1
               email: "putra123@gmail.com"
@@ -214,7 +216,6 @@ paths:
                   email: "putra123@gmail.com"
                   name: "Putra"
                   phone_number: "08123456789"
-                  password: "putra123"
                   profile_photo: "profile-photo.png"
                   background_photo: "background-photo.png"
                 message: "success update user's data"
@@ -238,12 +239,8 @@ paths:
         - "Users"
       description: "digunakan untuk menghapus data user"
       summary: "delete user's account"
-      parameters:
-        - name: id
-          in: path
-          required: true
-          schema:
-            type: integer
+      security:
+        - bearerAuth: [Alt3rra]
       responses:
         200:
           description: "success deleted user"
@@ -269,25 +266,97 @@ paths:
                 message: "user not found"
         500:
           $ref: '#/components/responses/500'
-  
+
+  /allposts:
+    get:
+      tags:
+        - "Posts"
+      description: digunakan untuk melihat semua postingan
+      summary: view all posts
+      responses:
+        200:
+          description: "berhasil lihat data user"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/responseObjectArr'
+              example:
+                data:
+                  - content: hari ini cerah sekali
+                    photo: "photo1.png"
+                  - content: hari ini cukup berawan
+                    photo: "photo2.png"
+                  - content: hatiku sedang gembira
+                    photo: "photo3.png"
+        404:
+          description: "kesalahan input data"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message: 
+                    type: string
+              example:
+                message: "post not found"
+        500:
+          $ref: '#/components/responses/500'
   /posts:
+    get:
+      tags:
+        - "Posts"
+      description: digunakan untuk melihat semua postingan user yang sedang login
+      summary: view login user's posts
+      security:
+      - bearerAuth: [Alt3rra]
+      responses:
+        200:
+          description: "berhasil lihat data user"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/responseObjectArr'
+              example:
+                data:
+                  - content: hari ini cerah sekali
+                    photo: "photo1.png"
+                  - content: hari ini cukup berawan
+                    photo: "photo2.png"
+                  - content: hatiku sedang gembira
+                    photo: "photo3.png"
+        404:
+          description: "kesalahan input data"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message: 
+                    type: string
+              example:
+                message: "post not found"
+        500:
+          $ref: '#/components/responses/500'
     post:
       tags:
         - "Posts"
       description: digunakan untuk masuk membuat postingan
       summary: "post something"
+      security:
+        - bearerAuth: [Alt3rra]
       requestBody:
         content:
-          application/json:
+          multipart/form-data:
             schema:
               type: object
               properties:
-                body:
+                content:
                   type: string
                 photo:
                   type: string
+                  format: binary
             example:
-              body: "hari ini cerah sekali"
+              content: "hari ini cerah sekali"
               photo: "photo.png"
       responses:
         201:
@@ -305,57 +374,33 @@ paths:
           $ref: '#/components/responses/400'
         500:
           $ref: '#/components/responses/500'
-    get:
-        tags:
-          - "Posts"
-        description: digunakan untuk melihat semua postingan
-        summary: view all posts
-        responses:
-          200:
-            description: "berhasil lihat data user"
-            content:
-              application/json:
-                schema:
-                  $ref: '#/components/schemas/responseObjectArr'
-                example:
-                  data:
-                    - cerita: hari ini cerah sekali
-                      photo: "photo1.png"
-                    - cerita: hari ini cukup berawan
-                      photo: "photo2.png"
-                    - cerita: hatiku sedang gembira
-                      photo: "photo3.png"
-          404:
-            description: "kesalahan input data"
-            content:
-              application/json:
-                schema:
-                  type: object
-                  properties:
-                    message: 
-                      type: string
-                example:
-                  message: "post not found"
-          500:
-            $ref: '#/components/responses/500'
   /posts/{id}:
     put:
       tags:
         - "Posts"
       description: digunakan untuk masuk memperbarui postingan
       summary: "update post"
+      security:
+        - bearerAuth: [Alt3rra]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
       requestBody:
         content:
-          application/json:
+          multipart/form-data:
             schema:
               type: object
               properties:
-                body:
+                content:
                   type: string
                 photo:
                   type: string
+                  format: binary
             example:
-              body: hari ini cukup berawan
+              content: hari ini cukup berawan
               photo: "photo.png"
       responses:
         200:
@@ -388,6 +433,8 @@ paths:
         - "Posts"
       description: "digunakan untuk menghapus postingan user"
       summary: "delete user's post"
+      security:
+        - bearerAuth: [Alt3rra]
       parameters:
         - name: id
           in: path
@@ -423,7 +470,15 @@ paths:
         tags:
           - "Posts"
         description: digunakan untuk melihat semua postingan
-        summary: view all posts
+        summary: view post by id
+        security:
+        - bearerAuth: [Alt3rra]
+        parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
         responses:
           200:
             description: "berhasil lihat data user"
@@ -433,7 +488,7 @@ paths:
                   $ref: '#/components/schemas/responseObject'
                 example:
                   data:
-                    cerita: hari ini cerah sekali
+                    content: hari ini cerah sekali
                     photo: "photo1.png"
           404:
             description: "kesalahan input data"
@@ -449,28 +504,27 @@ paths:
           500:
             $ref: '#/components/responses/500'
 
-  /post/{post-id}/comments:
+  /comments:
     post:
       tags:
         - "Comments"
       description: digunakan untuk masuk membuat komentar suatu postingan
       summary: "Comment something"
-      parameters:
-        - name: post-id
-          in: path
-          required: true
-          schema:
-            type: integer
+      security:
+        - bearerAuth: [Alt3rra]
       requestBody:
         content:
           application/json:
             schema:
               type: object
               properties:
-                body:
+                post_ID:
+                  type: integer
+                content:
                   type: string
             example:
-              body: "hari ini cerah sekali"
+              post_ID: 1
+              content: "hari ini cerah sekali"
       responses:
         201:
           description: "Berhasil comment"
@@ -500,9 +554,9 @@ paths:
                   $ref: '#/components/schemas/responseObjectArr'
                 example:
                   data:
-                    - body: "bagus"
-                    - body: "keren"
-                    - body: "mantap"
+                    - content: "bagus"
+                    - content: "keren"
+                    - content: "mantap"
           404:
             description: "kesalahan input data"
             content:
@@ -517,18 +571,15 @@ paths:
           500:
             $ref: '#/components/responses/500'
 
-  /post/{post-id}/comments/{comment-id}:
+  /comments/{comment-id}:
     put:
       tags:
         - "Comments"
       description: digunakan untuk edit komentar
       summary: "update komentar"
+      security:
+        - bearerAuth: [Alt3rra]
       parameters:
-        - name: post-id
-          in: path
-          required: true
-          schema:
-            type: integer
         - name: comment-id
           in: path
           required: true
@@ -540,10 +591,10 @@ paths:
             schema:
               type: object
               properties:
-                body:
+                content:
                   type: string
             example:
-              body: oke
+              content: oke
       responses:
         200:
           description: "Berhasil memperbarui komentar"
@@ -553,7 +604,7 @@ paths:
                 $ref: '#/components/schemas/responseObject'
               example:
                 data:
-                  body: "oke"
+                  content: "oke"
         404:
           description: "Kesalahan input data dari user"
           content:
@@ -574,12 +625,9 @@ paths:
         - "Comments"
       description: "digunakan untuk menghapus komentar user"
       summary: "delete user's comment"
+      security:
+        - bearerAuth: [Alt3rra]
       parameters:
-        - name: post-id
-          in: path
-          required: true
-          schema:
-            type: integer
         - name: comment-id
           in: path
           required: true
@@ -610,6 +658,7 @@ paths:
                 message: "comment not found"
         500:
           $ref: '#/components/responses/500'
+
 components:
   schemas:
     responseObject:
@@ -628,6 +677,12 @@ components:
             type: object
         message:
           type: string
+  
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
   responses:
     400:
       description: "Kesalahan dari user"
