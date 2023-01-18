@@ -22,7 +22,7 @@ type CommentHandler interface {
 }
 
 type CommentService interface {
-	Add(token interface{}, newComment Core, postId uint) (Core, error)
+	Add(token interface{}, newComment Core) (Core, error)
 	GetComments() ([]Core, error)
 	Update(token interface{}, updComment Core, postId, commentId uint) (Core, error)
 	Delete(token interface{}, postId, commentId uint) error
