@@ -70,11 +70,12 @@ func (ph *postHandle) Update() echo.HandlerFunc {
 			return c.JSON(http.StatusBadRequest, "format inputan salah")
 		}
 
-		if file, err := c.FormFile("photo"); err != nil {
+		file, err := c.FormFile("photo")
+		if file != nil && err == nil {
+			updatePhoto = file
+		} else if file != nil && err != nil {
 			log.Println("error read update post photo")
 			return c.JSON(http.StatusBadRequest, helper.ErrorResponse("wrong image input"))
-		} else {
-			updatePhoto = file
 		}
 
 		res, err := ph.srvc.Update(token, uint(cnv), *ToCore(input), updatePhoto)
