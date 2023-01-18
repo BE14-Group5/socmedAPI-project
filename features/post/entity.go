@@ -30,8 +30,8 @@ type PostService interface {
 	Update(token interface{}, postID uint, updatedPost Core, updatePhoto *multipart.FileHeader) (Core, error)
 	Delete(token interface{}, postID uint) error
 	MyPosts(token interface{}) ([]MyPostsResp, error)
-	AllPosts() ([]Core, error)
-	GetPostById(token interface{}, postID uint) (Core, error)
+	AllPosts() ([]MyPostsResp, error)
+	GetPostById(token interface{}, postID uint) (MyPostsResp, error)
 }
 
 type PostData interface {
@@ -39,6 +39,6 @@ type PostData interface {
 	Update(postID uint, userID uint, updatedPost Core) (Core, error)
 	Delete(postID uint, userID uint) error
 	MyPosts(userID uint) ([]MyPostsResp, error)
-	AllPosts() ([]Core, error)
-	GetPostById(postID uint, userID uint) (Core, error)
+	AllPosts() ([]MyPostsResp, error)
+	GetPostById(postID uint, userID uint) (MyPostsResp, error)
 }

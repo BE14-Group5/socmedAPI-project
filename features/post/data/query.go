@@ -94,26 +94,43 @@ func (pd *postData) MyPosts(userID uint) ([]post.MyPostsResp, error) {
 	return cnvMyPosts, nil
 }
 
-func (pd *postData) AllPosts() ([]post.Core, error) {
-	allPosts := []PostWriter{}
-	err := pd.db.Raw("SELECT posts.id, posts.content, posts.photo, users.name as writer FROM posts JOIN users on users.id = posts.user_id WHERE posts.deleted_at is NULL").Find(&allPosts).Error
+func (pd *postData) AllPosts() ([]post.MyPostsResp, error) {
+	allPosts := []post.Core{}
+	cnvAllPosts := []post.MyPostsResp{}
+	comments := []comment.Core{}
+
+	err := pd.db.Raw("SELECT posts.id, posts.content, posts.photo, posts.user_id, name Writer, posts.created_at FROM posts JOIN users u ON user_id = u.id  WHERE posts.deleted_at is NULL").Scan(&allPosts).Error
 	if err != nil {
 		log.Println("all book query error")
-		return []post.Core{}, err
+		return []post.MyPostsResp{}, err
 	}
 
-	listAllPosts := ListAllModelsToCore(allPosts)
+	for i, _ := range allPosts {
+		tmp := post.ToMyPostResp(allPosts[i])
+		cnvAllPosts = append(cnvAllPosts, tmp)
+	}
 
-	return listAllPosts, nil
+	for i, val := range cnvAllPosts {
+		pd.db.Raw("SELECT c.id, user_id, name UserName, post_id, c.created_at, content FROM comments c JOIN users u ON c.user_id = u.id WHERE c.deleted_at IS NULL AND post_id = ?", val.ID).Scan(&comments)
+		cnvAllPosts[i].Comments = append(val.Comments, comments...)
+	}
+
+	return cnvAllPosts, nil
 }
 
-func (pd *postData) GetPostById(postID uint, userID uint) (post.Core, error) {
-	res := Post{}
-	err := pd.db.Where("id = ? AND user_id = ?", postID, userID).Find(&res).Error
+func (pd *postData) GetPostById(postID uint, userID uint) (post.MyPostsResp, error) {
+	res := post.Core{}
+	comments := []comment.Core{}
+
+	err := pd.db.Raw("SELECT posts.id, posts.content, posts.photo, posts.user_id, name Writer, posts.created_at FROM posts JOIN users u ON user_id = u.id  WHERE posts.deleted_at is NULL AND posts.id = ?", postID).Scan(&res).Error
 	if err != nil {
 		log.Println("GetPostById query error")
-		return post.Core{}, err
+		return post.MyPostsResp{}, err
 	}
 
-	return DataToCore(res), nil
+	cnvRes := post.ToMyPostResp(res)
+	pd.db.Raw("SELECT c.id, user_id, name UserName, post_id, c.created_at, content FROM comments c JOIN users u ON c.user_id = u.id WHERE c.deleted_at IS NULL AND post_id = ?", postID).Scan(&comments)
+	cnvRes.Comments = append(cnvRes.Comments, comments...)
+
+	return cnvRes, nil
 }
