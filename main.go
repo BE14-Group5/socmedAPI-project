@@ -3,6 +3,9 @@ package main
 import (
 	"log"
 	"simple-social-media-API/config"
+	cd "simple-social-media-API/features/comment/data"
+	ch "simple-social-media-API/features/comment/handler"
+	cs "simple-social-media-API/features/comment/services"
 	pd "simple-social-media-API/features/post/data"
 	phdl "simple-social-media-API/features/post/handler"
 	psrv "simple-social-media-API/features/post/services"
@@ -28,6 +31,10 @@ func main() {
 	postSrv := psrv.Isolation(postData)
 	postHdl := phdl.Isolation(postSrv)
 
+	commentData := cd.New(db)
+	commentSrv := cs.New(commentData)
+	commentHdl := ch.New(commentSrv)
+
 	e.Pre(middleware.RemoveTrailingSlash())
 	e.Use(middleware.CORS())
 	e.Use(middleware.LoggerWithConfig(middleware.LoggerConfig{
@@ -48,6 +55,8 @@ func main() {
 	e.GET("/posts", postHdl.MyPosts(), middleware.JWT([]byte(config.JWT_KEY)))
 	e.GET("/posts/:id", postHdl.GetPostById(), middleware.JWT([]byte(config.JWT_KEY)))
 	e.GET("/allposts", postHdl.AllPosts())
+
+	e.POST("/comments", commentHdl.Add(), middleware.JWT([]byte(config.JWT_KEY)))
 
 	if err := e.Start(":8000"); err != nil {
 		log.Println(err.Error())
