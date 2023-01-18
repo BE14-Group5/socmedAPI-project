@@ -1,6 +1,7 @@
 package data
 
 import (
+	"simple-social-media-API/features/comment/data"
 	"simple-social-media-API/features/post"
 
 	"gorm.io/gorm"
@@ -11,6 +12,7 @@ type Post struct {
 	Content string
 	Photo   string
 	UserID  uint
+	Comment []data.Comment
 }
 
 func DataToCore(data Post) post.Core {
