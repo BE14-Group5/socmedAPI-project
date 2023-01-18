@@ -218,14 +218,15 @@ func TestUpdate(t *testing.T) {
 		Name:        "fauzan",
 		Email:       "mfauzanptra@gmail.com",
 		PhoneNumber: "085659171799",
-		Password:    "hahaha123",
 	}
+	expectedData := user.Core{
+		Name:        "fauzan",
+		Email:       "mfauzanptra@gmail.com",
+		PhoneNumber: "085659171799",
+	}
+	var a, b *multipart.FileHeader
 	t.Run("update success", func(t *testing.T) {
-		expectedData := user.Core{
-			Name:        "fauzan",
-			Email:       "mfauzanptra@gmail.com",
-			PhoneNumber: "085659171799",
-		}
+		data.On("Profile", uint(1)).Return(expectedData, nil).Once()
 		data.On("Update", uint(1), mock.Anything).Return(expectedData, nil).Once()
 		srv := New(data)
 
@@ -233,7 +234,7 @@ func TestUpdate(t *testing.T) {
 		pToken := token.(*jwt.Token)
 		pToken.Valid = true
 
-		res, err := srv.Update(pToken, updUser)
+		res, err := srv.Update(pToken, updUser, a, b)
 		assert.Nil(t, err)
 		assert.Equal(t, expectedData.ID, res.ID)
 		assert.Equal(t, expectedData.Name, res.Name)
@@ -245,35 +246,66 @@ func TestUpdate(t *testing.T) {
 
 		_, token := helper.GenerateJWT(1)
 
-		res, err := srv.Update(token, updUser)
+		res, err := srv.Update(token, updUser, a, b)
 		assert.NotNil(t, err)
 		assert.ErrorContains(t, err, "token error")
 		assert.Equal(t, uint(0), res.ID)
 	})
 
 	t.Run("not found", func(t *testing.T) {
-		data.On("Update", uint(2), mock.Anything).Return(user.Core{}, errors.New("data tidak ditemukan")).Once()
+		data.On("Profile", uint(2)).Return(user.Core{}, errors.New("data not found")).Once()
 		srv := New(data)
 
 		_, token := helper.GenerateJWT(2)
 		pToken := token.(*jwt.Token)
 		pToken.Valid = true
 
-		res, err := srv.Update(pToken, updUser)
+		res, err := srv.Update(pToken, updUser, a, b)
 		assert.NotNil(t, err)
 		assert.Equal(t, res.Name, "")
 		data.AssertExpectations(t)
 	})
 
 	t.Run("server problem", func(t *testing.T) {
-		data.On("Update", mock.Anything, mock.Anything).Return(user.Core{}, errors.New("terdapat masalah pada server")).Once()
+		data.On("Profile", uint(1)).Return(user.Core{}, errors.New("server problem")).Once()
 		srv := New(data)
 
 		_, token := helper.GenerateJWT(1)
 		pToken := token.(*jwt.Token)
 		pToken.Valid = true
 
-		res, err := srv.Update(pToken, updUser)
+		res, err := srv.Update(pToken, updUser, a, b)
+		assert.NotNil(t, err)
+		assert.ErrorContains(t, err, "server")
+		assert.Equal(t, res.Name, "")
+		data.AssertExpectations(t)
+	})
+
+	t.Run("not found", func(t *testing.T) {
+		data.On("Profile", uint(2)).Return(expectedData, nil).Once()
+		data.On("Update", mock.Anything, mock.Anything).Return(user.Core{}, errors.New("data not found")).Once()
+		srv := New(data)
+
+		_, token := helper.GenerateJWT(2)
+		pToken := token.(*jwt.Token)
+		pToken.Valid = true
+
+		res, err := srv.Update(pToken, updUser, a, b)
+		assert.NotNil(t, err)
+		assert.Equal(t, res.Name, "")
+		data.AssertExpectations(t)
+	})
+
+	t.Run("server problem", func(t *testing.T) {
+		data.On("Profile", uint(1)).Return(expectedData, nil).Once()
+		data.On("Update", mock.Anything, mock.Anything).Return(user.Core{}, errors.New("server problem")).Once()
+		srv := New(data)
+
+		_, token := helper.GenerateJWT(1)
+		pToken := token.(*jwt.Token)
+		pToken.Valid = true
+
+		res, err := srv.Update(pToken, updUser, a, b)
 		assert.NotNil(t, err)
 		assert.ErrorContains(t, err, "server")
 		assert.Equal(t, res.Name, "")
