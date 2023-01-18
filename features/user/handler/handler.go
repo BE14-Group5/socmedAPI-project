@@ -31,18 +31,20 @@ func (uc *userControl) Register() echo.HandlerFunc {
 			return c.JSON(http.StatusBadRequest, helper.ErrorResponse("wrong input"))
 		}
 
-		if file, err := c.FormFile("profile_photo"); err != nil {
+		file, err := c.FormFile("profile_photo")
+		if file != nil && err == nil {
+			profilePhoto = file
+		} else if file != nil && err != nil {
 			log.Println("error read profile_photo")
 			return c.JSON(http.StatusBadRequest, helper.ErrorResponse("wrong image input"))
-		} else {
-			profilePhoto = file
 		}
 
-		if file, err := c.FormFile("background_photo"); err != nil {
+		file, err = c.FormFile("background_photo")
+		if file != nil && err == nil {
+			backgroundPhoto = file
+		} else if file != nil && err != nil {
 			log.Println("error read background_photo")
 			return c.JSON(http.StatusBadRequest, helper.ErrorResponse("wrong image input"))
-		} else {
-			backgroundPhoto = file
 		}
 
 		// if file, err := c.FormFile("profile_photo"); err != nil {
