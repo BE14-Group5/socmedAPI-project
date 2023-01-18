@@ -139,12 +139,28 @@ func (uc *userControl) Profile() echo.HandlerFunc {
 func (uc *userControl) Update() echo.HandlerFunc {
 	return func(c echo.Context) error {
 		token := c.Get("user")
+		var profilePhoto, backgroundPhoto *multipart.FileHeader
 
 		updatedData := RegisterRequest{}
 		if err := c.Bind(&updatedData); err != nil {
 			return c.JSON(http.StatusBadRequest, "wrong input format")
 		}
-		res, err := uc.srv.Update(token, *ToCore(updatedData))
+		file, err := c.FormFile("profile_photo")
+		if file != nil && err == nil {
+			profilePhoto = file
+		} else if file != nil && err != nil {
+			log.Println("error read profile_photo")
+			return c.JSON(http.StatusBadRequest, helper.ErrorResponse("wrong image input"))
+		}
+
+		file, err = c.FormFile("background_photo")
+		if file != nil && err == nil {
+			backgroundPhoto = file
+		} else if file != nil && err != nil {
+			log.Println("error read background_photo")
+			return c.JSON(http.StatusBadRequest, helper.ErrorResponse("wrong image input"))
+		}
+		res, err := uc.srv.Update(token, *ToCore(updatedData), profilePhoto, backgroundPhoto)
 		if err != nil {
 			if strings.Contains(err.Error(), "not found") {
 				log.Println("user not found: ", err.Error())

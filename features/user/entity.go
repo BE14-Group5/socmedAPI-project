@@ -28,7 +28,7 @@ type UserService interface {
 	Register(newUser Core, profilePhoto *multipart.FileHeader, backgroundPhoto *multipart.FileHeader) (Core, error)
 	Login(email, password string) (string, Core, error)
 	Profile(token interface{}) (Core, error)
-	Update(token interface{}, updateData Core) (Core, error)
+	Update(token interface{}, updateData Core, profilePhoto *multipart.FileHeader, backgroundPhoto *multipart.FileHeader) (Core, error)
 	Deactive(token interface{}) error
 }
 
