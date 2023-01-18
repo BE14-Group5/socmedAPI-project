@@ -107,7 +107,7 @@ func (uuc *userUseCase) Profile(token interface{}) (user.Core, error) {
 	}
 	return res, nil
 }
-func (uuc *userUseCase) Update(token interface{}, updatedData user.Core) (user.Core, error) {
+func (uuc *userUseCase) Update(token interface{}, updatedData user.Core, profilePhoto *multipart.FileHeader, backgroundPhoto *multipart.FileHeader) (user.Core, error) {
 	userId := helper.ExtractToken(token)
 	if userId <= 0 {
 		log.Println("extract token error")
@@ -117,7 +117,30 @@ func (uuc *userUseCase) Update(token interface{}, updatedData user.Core) (user.C
 		hashed, _ := bcrypt.GenerateFromPassword([]byte(updatedData.Password), bcrypt.DefaultCost)
 		updatedData.Password = string(hashed)
 	}
-	res, err := uuc.qry.Update(uint(userId), updatedData)
+
+	res, err := uuc.qry.Profile(uint(userId))
+	if err != nil {
+		errmsg := ""
+		if strings.Contains(err.Error(), "not found") {
+			errmsg = "data not found"
+		} else {
+			errmsg = "server problem"
+		}
+		log.Println("error profile query: ", err.Error())
+		return user.Core{}, errors.New(errmsg)
+	}
+
+	if profilePhoto != nil {
+		path, _ := helper.UploadProfilePhotoS3(*profilePhoto, res.Email)
+		updatedData.ProfilePhoto = path
+	}
+
+	if backgroundPhoto != nil {
+		path, _ := helper.UploadBackgroundPhotoS3(*backgroundPhoto, res.Email)
+		updatedData.BackgroundPhoto = path
+	}
+
+	res, err = uuc.qry.Update(uint(userId), updatedData)
 	if err != nil {
 		errmsg := ""
 		if strings.Contains(err.Error(), "not found") {
