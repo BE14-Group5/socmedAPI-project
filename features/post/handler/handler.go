@@ -113,7 +113,19 @@ func (ph *postHandle) Delete() echo.HandlerFunc {
 }
 
 func (ph *postHandle) MyPosts() echo.HandlerFunc {
-	return nil
+	return func(c echo.Context) error {
+		token := c.Get("user")
+		res, err := ph.srvc.MyPosts(token)
+		if err != nil {
+			log.Println("error running myposts service")
+			return c.JSON(http.StatusInternalServerError, helper.ErrorResponse("server problem"))
+		}
+
+		return c.JSON(http.StatusCreated, map[string]interface{}{
+			"data":    ListMyPostsToResponse(res),
+			"message": "success update post",
+		})
+	}
 }
 
 func (ph *postHandle) AllPosts() echo.HandlerFunc {

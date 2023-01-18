@@ -40,3 +40,26 @@ func UpdatePostToResponse(dataCore post.Core) UpdatePostResponse {
 		Photo:   dataCore.Photo,
 	}
 }
+
+type MyPostsResponse struct {
+	ID      uint   `json:"id"`
+	Content string `json:"content"`
+	Photo   string `json:"photo"`
+}
+
+func MyPostsToResponse(dataCore post.Core) MyPostsResponse {
+	return MyPostsResponse{
+		ID:      dataCore.ID,
+		Content: dataCore.Content,
+		Photo:   dataCore.Photo,
+	}
+}
+
+func ListMyPostsToResponse(dataCore []post.Core) []MyPostsResponse {
+	var DataResponse []MyPostsResponse
+
+	for _, value := range dataCore {
+		DataResponse = append(DataResponse, MyPostsToResponse(value))
+	}
+	return DataResponse
+}

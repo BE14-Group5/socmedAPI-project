@@ -95,7 +95,19 @@ func (ps *postSrvc) Delete(token interface{}, postID uint) error {
 }
 
 func (ps *postSrvc) MyPosts(token interface{}) ([]post.Core, error) {
-	return []post.Core{}, nil
+	userID := helper.ExtractToken(token)
+
+	res, err := ps.data.MyPosts(uint(userID))
+	if err != nil {
+		msg := ""
+		if strings.Contains(err.Error(), "not found") {
+			msg = "data not found"
+		} else {
+			msg = "server problem"
+		}
+		return []post.Core{}, errors.New(msg)
+	}
+	return res, nil
 }
 
 func (ps *postSrvc) AllPosts() ([]post.Core, error) {

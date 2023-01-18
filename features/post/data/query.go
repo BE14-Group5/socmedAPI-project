@@ -70,7 +70,15 @@ func (pd *postData) Delete(postID uint, userID uint) error {
 }
 
 func (pd *postData) MyPosts(userID uint) ([]post.Core, error) {
-	return []post.Core{}, nil
+	myPosts := []Post{}
+	err := pd.db.Raw("SELECT posts.id, posts.content, posts.photo FROM posts WHERE user_id = ?", userID).Find(&myPosts).Error
+	if err != nil {
+		log.Println("my book query error")
+		return []post.Core{}, errors.New("data not found")
+	}
+	listMyPosts := ListModelsToCore(myPosts)
+
+	return listMyPosts, nil
 }
 
 func (pd *postData) AllPosts() ([]post.Core, error) {

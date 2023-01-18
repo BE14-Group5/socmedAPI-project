@@ -18,6 +18,7 @@ func DataToCore(data Post) post.Core {
 		ID:      data.ID,
 		Content: data.Content,
 		Photo:   data.Photo,
+		UserID:  data.UserID,
 	}
 }
 
@@ -27,4 +28,21 @@ func CoreToData(data post.Core) Post {
 		Content: data.Content,
 		Photo:   data.Photo,
 	}
+}
+
+// For MyPosts
+func (dataModel *Post) ModelsToCore() post.Core {
+	return post.Core{
+		ID:      dataModel.ID,
+		Content: dataModel.Content,
+		Photo:   dataModel.Photo,
+	}
+}
+
+func ListModelsToCore(dataModels []Post) []post.Core {
+	var dataCore []post.Core
+	for _, val := range dataModels {
+		dataCore = append(dataCore, val.ModelsToCore())
+	}
+	return dataCore
 }
