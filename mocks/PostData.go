@@ -35,15 +35,15 @@ func (_m *PostData) Add(userID uint, newPost post.Core) (post.Core, error) {
 }
 
 // AllPosts provides a mock function with given fields:
-func (_m *PostData) AllPosts() ([]post.Core, error) {
+func (_m *PostData) AllPosts() ([]post.MyPostsResp, error) {
 	ret := _m.Called()
 
-	var r0 []post.Core
-	if rf, ok := ret.Get(0).(func() []post.Core); ok {
+	var r0 []post.MyPostsResp
+	if rf, ok := ret.Get(0).(func() []post.MyPostsResp); ok {
 		r0 = rf()
 	} else {
 		if ret.Get(0) != nil {
-			r0 = ret.Get(0).([]post.Core)
+			r0 = ret.Get(0).([]post.MyPostsResp)
 		}
 	}
 
@@ -72,14 +72,14 @@ func (_m *PostData) Delete(postID uint, userID uint) error {
 }
 
 // GetPostById provides a mock function with given fields: postID, userID
-func (_m *PostData) GetPostById(postID uint, userID uint) (post.Core, error) {
+func (_m *PostData) GetPostById(postID uint, userID uint) (post.MyPostsResp, error) {
 	ret := _m.Called(postID, userID)
 
-	var r0 post.Core
-	if rf, ok := ret.Get(0).(func(uint, uint) post.Core); ok {
+	var r0 post.MyPostsResp
+	if rf, ok := ret.Get(0).(func(uint, uint) post.MyPostsResp); ok {
 		r0 = rf(postID, userID)
 	} else {
-		r0 = ret.Get(0).(post.Core)
+		r0 = ret.Get(0).(post.MyPostsResp)
 	}
 
 	var r1 error

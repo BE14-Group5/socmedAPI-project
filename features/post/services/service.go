@@ -52,23 +52,23 @@ func (ps *postSrvc) Update(token interface{}, postID uint, updatedPost post.Core
 		return post.Core{}, errors.New("user not found")
 	}
 
-	res, err := ps.data.GetPostById(postID, uint(userID))
-	if err != nil {
-		msg := ""
-		if strings.Contains(err.Error(), "not found") {
-			msg = "data not found"
-		} else {
-			msg = "server problem"
-		}
-		return post.Core{}, errors.New(msg)
-	}
+	// res, err := ps.data.GetPostById(postID, uint(userID))
+	// if err != nil {
+	// 	msg := ""
+	// 	if strings.Contains(err.Error(), "not found") {
+	// 		msg = "data not found"
+	// 	} else {
+	// 		msg = "server problem"
+	// 	}
+	// 	return post.Core{}, errors.New(msg)
+	// }
 
 	if updatePhoto != nil {
 		path, _ := helper.UploadPostPhotoS3(*updatePhoto, helper.ExtractToken(token))
 		updatedPost.Photo = path
 	}
 
-	res, err = ps.data.Update(postID, uint(userID), updatedPost)
+	res, err := ps.data.Update(postID, uint(userID), updatedPost)
 	if err != nil {
 		msg := ""
 		if strings.Contains(err.Error(), "not found") {
@@ -117,7 +117,7 @@ func (ps *postSrvc) MyPosts(token interface{}) ([]post.MyPostsResp, error) {
 	return res, nil
 }
 
-func (ps *postSrvc) AllPosts() ([]post.Core, error) {
+func (ps *postSrvc) AllPosts() ([]post.MyPostsResp, error) {
 	res, err := ps.data.AllPosts()
 	if err != nil {
 		msg := ""
@@ -126,12 +126,12 @@ func (ps *postSrvc) AllPosts() ([]post.Core, error) {
 		} else {
 			msg = "server problem"
 		}
-		return []post.Core{}, errors.New(msg)
+		return []post.MyPostsResp{}, errors.New(msg)
 	}
 	return res, nil
 }
 
-func (ps *postSrvc) GetPostById(token interface{}, postID uint) (post.Core, error) {
+func (ps *postSrvc) GetPostById(token interface{}, postID uint) (post.MyPostsResp, error) {
 	userID := helper.ExtractToken(token)
 	res, err := ps.data.GetPostById(postID, uint(userID))
 	if err != nil {
@@ -141,7 +141,7 @@ func (ps *postSrvc) GetPostById(token interface{}, postID uint) (post.Core, erro
 		} else {
 			msg = "server problem"
 		}
-		return post.Core{}, errors.New(msg)
+		return post.MyPostsResp{}, errors.New(msg)
 	}
 	return res, nil
 }
