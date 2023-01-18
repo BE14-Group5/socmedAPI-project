@@ -3,6 +3,7 @@ package data
 import (
 	"errors"
 	"log"
+	"simple-social-media-API/features/comment"
 	"simple-social-media-API/features/post"
 
 	"gorm.io/gorm"
@@ -69,16 +70,28 @@ func (pd *postData) Delete(postID uint, userID uint) error {
 	return nil
 }
 
-func (pd *postData) MyPosts(userID uint) ([]post.Core, error) {
-	myPosts := []Post{}
-	err := pd.db.Raw("SELECT posts.id, posts.content, posts.photo FROM posts WHERE posts.deleted_at is NULL AND user_id = ?", userID).Find(&myPosts).Error
+func (pd *postData) MyPosts(userID uint) ([]post.MyPostsResp, error) {
+	myPosts := []post.Core{}
+	cnvMyPosts := []post.MyPostsResp{}
+	comments := []comment.Core{}
+
+	err := pd.db.Raw("SELECT posts.id, posts.content, posts.photo, posts.user_id, name Writer, posts.created_at  FROM posts JOIN users u ON user_id = u.id  WHERE posts.deleted_at is NULL AND user_id = ?", userID).Scan(&myPosts).Error
 	if err != nil {
 		log.Println("my book query error")
-		return []post.Core{}, errors.New("data not found")
+		return []post.MyPostsResp{}, errors.New("data not found")
 	}
-	listMyPosts := ListModelsToCore(myPosts)
 
-	return listMyPosts, nil
+	for i, _ := range myPosts {
+		tmp := post.ToMyPostResp(myPosts[i])
+		cnvMyPosts = append(cnvMyPosts, tmp)
+	}
+
+	for i, val := range cnvMyPosts {
+		pd.db.Raw("SELECT c.id, user_id, name UserName, post_id, c.created_at, content FROM comments c JOIN users u ON c.user_id = u.id WHERE c.deleted_at IS NULL AND post_id = ?", val.ID).Scan(&comments)
+		cnvMyPosts[i].Comments = append(val.Comments, comments...)
+	}
+
+	return cnvMyPosts, nil
 }
 
 func (pd *postData) AllPosts() ([]post.Core, error) {
