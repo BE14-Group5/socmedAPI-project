@@ -52,15 +52,23 @@ func (ps *postSrvc) Update(token interface{}, postID uint, updatedPost post.Core
 		return post.Core{}, errors.New("user not found")
 	}
 
-	if updatePhoto != nil {
-		path, err := helper.UploadPostPhotoS3(*updatePhoto, helper.ExtractToken(token))
-		if err != nil {
-			return post.Core{}, err
+	res, err := ps.data.GetPostById(postID, uint(userID))
+	if err != nil {
+		msg := ""
+		if strings.Contains(err.Error(), "not found") {
+			msg = "data not found"
+		} else {
+			msg = "server problem"
 		}
+		return post.Core{}, errors.New(msg)
+	}
+
+	if updatePhoto != nil {
+		path, _ := helper.UploadPostPhotoS3(*updatePhoto, helper.ExtractToken(token))
 		updatedPost.Photo = path
 	}
 
-	res, err := ps.data.Update(postID, uint(userID), updatedPost)
+	res, err = ps.data.Update(postID, uint(userID), updatedPost)
 	if err != nil {
 		msg := ""
 		if strings.Contains(err.Error(), "not found") {
