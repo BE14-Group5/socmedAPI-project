@@ -2,16 +2,18 @@ package post
 
 import (
 	"mime/multipart"
+	"time"
 
 	"github.com/labstack/echo/v4"
 )
 
 type Core struct {
-	ID      uint
-	Content string
-	Photo   string
-	UserID  uint
-	Writer  string
+	ID        uint
+	Content   string
+	Photo     string
+	UserID    uint
+	Writer    string
+	CreatedAt time.Time
 }
 
 type PostHandler interface {
@@ -27,7 +29,7 @@ type PostService interface {
 	Add(token interface{}, newPost Core, postPhoto *multipart.FileHeader) (Core, error)
 	Update(token interface{}, postID uint, updatedPost Core, updatePhoto *multipart.FileHeader) (Core, error)
 	Delete(token interface{}, postID uint) error
-	MyPosts(token interface{}) ([]Core, error)
+	MyPosts(token interface{}) ([]MyPostsResp, error)
 	AllPosts() ([]Core, error)
 	GetPostById(token interface{}, postID uint) (Core, error)
 }
@@ -36,7 +38,7 @@ type PostData interface {
 	Add(userID uint, newPost Core) (Core, error)
 	Update(postID uint, userID uint, updatedPost Core) (Core, error)
 	Delete(postID uint, userID uint) error
-	MyPosts(userID uint) ([]Core, error)
+	MyPosts(userID uint) ([]MyPostsResp, error)
 	AllPosts() ([]Core, error)
 	GetPostById(postID uint, userID uint) (Core, error)
 }
