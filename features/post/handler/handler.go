@@ -31,11 +31,12 @@ func (ph *postHandle) Add() echo.HandlerFunc {
 			return c.JSON(http.StatusBadRequest, "format inputan salah")
 		}
 
-		if file, err := c.FormFile("photo"); err != nil {
+		file, err := c.FormFile("photo")
+		if file != nil && err == nil {
+			postPhoto = file
+		} else if file != nil && err != nil {
 			log.Println("error read post photo")
 			return c.JSON(http.StatusBadRequest, helper.ErrorResponse("wrong image input"))
-		} else {
-			postPhoto = file
 		}
 
 		res, err := ph.srvc.Add(token, *ToCore(input), postPhoto)
