@@ -1,6 +1,7 @@
 package data
 
 import (
+	"errors"
 	"log"
 	"simple-social-media-API/features/comment"
 
@@ -29,8 +30,17 @@ func (cd *commentData) Add(newComment comment.Core) (comment.Core, error) {
 	newComment.CreatedAt = cnv.CreatedAt
 	return newComment, nil
 }
-func (cd *commentData) GetComments() ([]comment.Core, error) {
-	return []comment.Core{}, nil
+func (cd *commentData) GetComments(postId uint) ([]comment.Core, error) {
+	comments := []comment.Core{}
+	qry := cd.db.Raw("SELECT c.id, user_id, name UserName, post_id, c.created_at, content FROM comments c JOIN users u ON c.user_id = u.id WHERE c.deleted_at IS NULL AND post_id = ?", postId).Scan(&comments)
+	if affrows := qry.RowsAffected; affrows <= 0 {
+		return nil, errors.New("empty comment")
+	}
+	if err := qry.Error; err != nil {
+		log.Println("error query: ", err.Error())
+		return nil, err
+	}
+	return comments, nil
 }
 func (cd *commentData) Update(updComment comment.Core) (comment.Core, error) {
 	return comment.Core{}, nil
