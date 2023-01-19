@@ -38,7 +38,8 @@ func main() {
 	e.Pre(middleware.RemoveTrailingSlash())
 	e.Use(middleware.CORS())
 	e.Use(middleware.LoggerWithConfig(middleware.LoggerConfig{
-		Format: "method=${method}, uri=${uri}, status=${status}, error=${error}\n",
+		Format:           "- ${time_custom} - method=${method}, uri=${uri}, status=${status}, error=${error}\n",
+		CustomTimeFormat: "2006/01/02 15:04:05",
 	}))
 	// e.Static("/files", "./files")
 	e.POST("/register", userHdl.Register())
