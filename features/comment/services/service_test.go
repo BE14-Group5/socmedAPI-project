@@ -96,3 +96,98 @@ func TestAdd(t *testing.T) {
 		repo.AssertExpectations(t)
 	})
 }
+
+func TestUpdate(t *testing.T) {
+	repo := mocks.NewCommentData(t)
+
+	inputData := comment.Core{
+		PostId:  1,
+		Content: "karya yang luar biasa",
+	}
+	resData := comment.Core{
+		ID:        1,
+		UserId:    1,
+		UserName:  "",
+		PostId:    1,
+		CreatedAt: time.Now(),
+		Content:   "karya yang luar biasa",
+	}
+
+	t.Run("success update comment", func(t *testing.T) {
+		userID := uint(1)
+		postId := uint(1)
+		commentId := uint(1)
+
+		repo.On("Update", userID, commentId, postId, inputData).Return(resData, nil).Once()
+
+		srv := New(repo)
+
+		_, token := helper.GenerateJWT(1)
+
+		pToken := token.(*jwt.Token)
+		pToken.Valid = true
+
+		res, err := srv.Update(pToken, commentId, postId, inputData)
+		assert.Nil(t, err)
+		assert.Equal(t, res.ID, resData.ID)
+		repo.AssertExpectations(t)
+	})
+
+	t.Run("comment not found", func(t *testing.T) {
+		userID := uint(1)
+		postId := uint(1)
+		commentId := uint(1)
+		repo.On("Update", userID, commentId, postId, inputData).Return(comment.Core{}, errors.New("data not found")).Once()
+
+		srv := New(repo)
+
+		_, token := helper.GenerateJWT(1)
+
+		pToken := token.(*jwt.Token)
+		pToken.Valid = true
+
+		res, err := srv.Update(pToken, commentId, postId, inputData)
+		assert.NotNil(t, err)
+		assert.ErrorContains(t, err, "not found")
+		assert.Equal(t, uint(0), res.ID)
+		repo.AssertExpectations(t)
+
+	})
+
+	t.Run("server problem", func(t *testing.T) {
+		userID := uint(1)
+		postId := uint(1)
+		commentId := uint(1)
+		repo.On("Update", userID, commentId, postId, inputData).Return(comment.Core{}, errors.New("server problem")).Once()
+
+		srv := New(repo)
+
+		_, token := helper.GenerateJWT(1)
+
+		pToken := token.(*jwt.Token)
+		pToken.Valid = true
+
+		res, err := srv.Update(pToken, commentId, postId, inputData)
+		assert.NotNil(t, err)
+		assert.ErrorContains(t, err, "server")
+		assert.Equal(t, uint(0), res.ID)
+		repo.AssertExpectations(t)
+	})
+
+	t.Run("jwt not valid", func(t *testing.T) {
+		postId := uint(1)
+		commentId := uint(1)
+		srv := New(repo)
+
+		_, token := helper.GenerateJWT(0)
+
+		pToken := token.(*jwt.Token)
+		pToken.Valid = true
+
+		res, err := srv.Update(pToken, commentId, postId, inputData)
+		assert.NotNil(t, err)
+		assert.ErrorContains(t, err, "not found")
+		assert.Equal(t, uint(0), res.UserId)
+		repo.AssertExpectations(t)
+	})
+}
