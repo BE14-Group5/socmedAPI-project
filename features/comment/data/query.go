@@ -45,10 +45,32 @@ func (cd *commentData) getComment(commentId uint) (comment.Core, error) {
 	}
 	return comments, nil
 }
+func (cd *commentData) Update(userId uint, commentId uint, postId uint, updComment comment.Core) (comment.Core, error) {
+	updt := CoreToData(updComment)
+	qry := cd.db.Where("id = ? AND user_id = ? AND post_id = ?", commentId, userId, postId).Updates(&updt)
+	if qry.RowsAffected <= 0 {
+		log.Println("update comment query error : data not found")
+		return comment.Core{}, errors.New("not found")
+	}
 
-func (cd *commentData) Update(updComment comment.Core) (comment.Core, error) {
-	return comment.Core{}, nil
+	if err := qry.Error; err != nil {
+		log.Println("update comment query error :", err.Error())
+		return comment.Core{}, errors.New("not found")
+	}
+
+	return ToCore(updt), nil
 }
 func (cd *commentData) Delete(userId, postId, commentId uint) error {
+	qry := cd.db.Where("user_id = ? AND post_id = ?", userId, postId).Delete(&Comment{}, commentId)
+
+	if qry.RowsAffected <= 0 {
+		log.Println("no rows affected")
+		return errors.New("data not found")
+	}
+
+	if err := qry.Error; err != nil {
+		log.Println("delete comment query error")
+		return errors.New("data not found")
+	}
 	return nil
 }
