@@ -60,11 +60,15 @@ paths:
           content:
             application/json:
               schema:
-                type: object
-                properties:
-                  message:
-                    type: string
+                $ref: '#/components/schemas/responseObject'
               example:
+                data:
+                  email: "putra123@gmail.com"
+                  name: "Putra"
+                  phone_number: "08123456789"
+                  password: "putra123"
+                  profile_photo: "profile-photo.png"
+                  background_photo: "background-photo.png"
                 message: "success register"
         400:
           $ref: '#/components/responses/400'
@@ -78,7 +82,7 @@ paths:
       description: digunakan untuk masuk kedalam sistem
       requestBody:
         content:
-          application/json:
+          multipart/form-data:
             schema:
               type: object
               properties:
@@ -107,7 +111,7 @@ paths:
                   profile_photo: "profile_photo.png"
                   background_photo: "background_photo.png"
                   token: "dfeft434r34t3t"
-                message: "success login"
+                message: "login success"
         401:
           description: "wrong password"
           content:
@@ -150,9 +154,12 @@ paths:
               example:
                 data:
                   id: 1
-                  nama: Putra
-                  email: ekacahyaps@gmail.com
-                message: "success get user"
+                  email: "putra123@gmail.com"
+                  name: "Putra"
+                  phone_number: "08123456789"
+                  profile_photo: "profile_photo.png"
+                  background_photo: "background_photo.png"
+                message: "get profile success"
         404:
           description: "data tidak ditemukan"
           content:
@@ -215,6 +222,7 @@ paths:
                   id: 1
                   email: "putra123@gmail.com"
                   name: "Putra"
+                  password: "jdbuindwoihnfwaifwjaifnwaonf"
                   phone_number: "08123456789"
                   profile_photo: "profile-photo.png"
                   background_photo: "background-photo.png"
@@ -266,7 +274,7 @@ paths:
                 message: "user not found"
         500:
           $ref: '#/components/responses/500'
-
+  
   /allposts:
     get:
       tags:
@@ -275,19 +283,44 @@ paths:
       summary: view all posts
       responses:
         200:
-          description: "berhasil lihat data user"
+          description: "berhasil lihat data postingan"
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/responseObjectArr'
               example:
                 data:
-                  - content: hari ini cerah sekali
+                  - 
+                    id: 1
+                    content: hari ini cerah sekali
                     photo: "photo1.png"
-                  - content: hari ini cukup berawan
-                    photo: "photo2.png"
-                  - content: hatiku sedang gembira
-                    photo: "photo3.png"
+                    user_id: 1
+                    name: "Putra"
+                    created_at: "2023-01-18T15:08:57.961+07:00"
+                    comments:
+                      -
+                        id: 1
+                        user_id: 1
+                        name: "Fauzan"
+                        post_id: 1
+                        created_at: "2023-01-18T15:26:53.423+07:00"
+                        content: "keren"
+                      - 
+                        id: 2
+                        user_id: 2
+                        name: "James"
+                        post_id: 1
+                        created_at: "2023-01-19T15:26:53.423+07:00"
+                        content: "manteub"
+                  -
+                    id: 2
+                    content: masak sendiri
+                    photo: "photo1.png"
+                    user_id: 10
+                    name: "Kirana"
+                    created_at: "2023-01-28T15:08:57.961+07:00"
+                    comments: 
+                message: "success show all user posts"
         404:
           description: "kesalahan input data"
           content:
@@ -311,19 +344,36 @@ paths:
       - bearerAuth: [Alt3rra]
       responses:
         200:
-          description: "berhasil lihat data user"
+          description: "berhasil lihat data postingan"
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/responseObjectArr'
               example:
                 data:
-                  - content: hari ini cerah sekali
+                  - 
+                    id: 1
+                    content: hari ini cerah sekali
                     photo: "photo1.png"
-                  - content: hari ini cukup berawan
-                    photo: "photo2.png"
-                  - content: hatiku sedang gembira
-                    photo: "photo3.png"
+                    user_id: 1
+                    name: "Putra"
+                    created_at: "2023-01-18T15:08:57.961+07:00"
+                    comments:
+                      -
+                        id: 1
+                        user_id: 1
+                        name: "Fauzan"
+                        post_id: 1
+                        created_at: "2023-01-18T15:26:53.423+07:00"
+                        content: "keren"
+                      - 
+                        id: 2
+                        user_id: 2
+                        name: "James"
+                        post_id: 1
+                        created_at: "2023-01-19T15:26:53.423+07:00"
+                        content: "manteub"
+                message: "success show all my post"
         404:
           description: "kesalahan input data"
           content:
@@ -488,8 +538,29 @@ paths:
                   $ref: '#/components/schemas/responseObject'
                 example:
                   data:
-                    content: hari ini cerah sekali
-                    photo: "photo1.png"
+                    - 
+                      id: 1
+                      content: hari ini cerah sekali
+                      photo: "photo1.png"
+                      user_id: 1
+                      name: "Putra"
+                      created_at: "2023-01-18T15:08:57.961+07:00"
+                      comments:
+                        -
+                          id: 1
+                          user_id: 1
+                          name: "Fauzan"
+                          post_id: 1
+                          created_at: "2023-01-18T15:26:53.423+07:00"
+                          content: "keren"
+                        - 
+                          id: 2
+                          user_id: 2
+                          name: "James"
+                          post_id: 1
+                          created_at: "2023-01-19T15:26:53.423+07:00"
+                          content: "manteub"
+                  message: "success get post"
           404:
             description: "kesalahan input data"
             content:
@@ -514,7 +585,7 @@ paths:
         - bearerAuth: [Alt3rra]
       requestBody:
         content:
-          application/json:
+          multipart/form-data:
             schema:
               type: object
               properties:
@@ -534,42 +605,47 @@ paths:
                   $ref: '#/components/schemas/responseObject'
                 example:
                   data:
-                    body: "hari ini cerah sekali"
+                    id: 3
+                    user_id: 1
+                    name: "Putra"
+                    post_id: 2
+                    created_at: "2023-01-18T21:36:06.773+07:00"
+                    content: "bagus sekali"
                   message: "success comment"   
         400:
           $ref: '#/components/responses/400'
         500:
           $ref: '#/components/responses/500'
-    get:
-        tags:
-          - "Comments"
-        description: digunakan untuk melihat semua komentar pada postingan tertentu
-        summary: view all comments
-        responses:
-          200:
-            description: "berhasil lihat comments"
-            content:
-              application/json:
-                schema:
-                  $ref: '#/components/schemas/responseObjectArr'
-                example:
-                  data:
-                    - content: "bagus"
-                    - content: "keren"
-                    - content: "mantap"
-          404:
-            description: "kesalahan input data"
-            content:
-              application/json:
-                schema:
-                  type: object
-                  properties:
-                    message: 
-                      type: string
-                example:
-                  message: "post not found"
-          500:
-            $ref: '#/components/responses/500'
+    # get:
+    #     tags:
+    #       - "Comments"
+    #     description: digunakan untuk melihat semua komentar pada postingan tertentu
+    #     summary: view all comments
+    #     responses:
+    #       200:
+    #         description: "berhasil lihat comments"
+    #         content:
+    #           application/json:
+    #             schema:
+    #               $ref: '#/components/schemas/responseObjectArr'
+    #             example:
+    #               data:
+    #                 - content: "bagus"
+    #                 - content: "keren"
+    #                 - content: "mantap"
+    #       404:
+    #         description: "kesalahan input data"
+    #         content:
+    #           application/json:
+    #             schema:
+    #               type: object
+    #               properties:
+    #                 message: 
+    #                   type: string
+    #             example:
+    #               message: "post not found"
+    #       500:
+    #         $ref: '#/components/responses/500'
 
   /comments/{comment-id}:
     put:
