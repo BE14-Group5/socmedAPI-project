@@ -63,7 +63,7 @@ func (pd *postData) Delete(postID uint, userID uint) error {
 
 	err := qry.Error
 	if err != nil {
-		log.Println("delete book query error")
+		log.Println("delete post query error")
 		return errors.New("data not found")
 	}
 
