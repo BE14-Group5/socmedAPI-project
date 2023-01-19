@@ -26,19 +26,22 @@ func (cd *commentData) Add(newComment comment.Core) (comment.Core, error) {
 		log.Println("error add comment query: ", err)
 		return comment.Core{}, err
 	}
-	newComment.ID = cnv.ID
-	newComment.CreatedAt = cnv.CreatedAt
-	return newComment, nil
+	// newComment.ID = cnv.ID
+	// newComment.CreatedAt = cnv.CreatedAt
+
+	retComm, _ := cd.getComment(cnv.ID)
+
+	return retComm, nil
 }
-func (cd *commentData) GetComments(postId uint) ([]comment.Core, error) {
-	comments := []comment.Core{}
-	qry := cd.db.Raw("SELECT c.id, user_id, name UserName, post_id, c.created_at, content FROM comments c JOIN users u ON c.user_id = u.id WHERE c.deleted_at IS NULL AND post_id = ?", postId).Scan(&comments)
+func (cd *commentData) getComment(commentId uint) (comment.Core, error) {
+	comments := comment.Core{}
+	qry := cd.db.Raw("SELECT c.id, user_id, name UserName, post_id, c.created_at, content FROM comments c JOIN users u ON c.user_id = u.id WHERE c.deleted_at IS NULL AND c.id = ?", commentId).Scan(&comments)
 	if affrows := qry.RowsAffected; affrows <= 0 {
-		return nil, errors.New("empty comment")
+		return comment.Core{}, errors.New("empty comment")
 	}
 	if err := qry.Error; err != nil {
 		log.Println("error query: ", err.Error())
-		return nil, err
+		return comment.Core{}, err
 	}
 	return comments, nil
 }
