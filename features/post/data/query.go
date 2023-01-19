@@ -73,7 +73,6 @@ func (pd *postData) Delete(postID uint, userID uint) error {
 func (pd *postData) MyPosts(userID uint) ([]post.MyPostsResp, error) {
 	myPosts := []post.Core{}
 	cnvMyPosts := []post.MyPostsResp{}
-	comments := []comment.Core{}
 
 	err := pd.db.Raw("SELECT posts.id, posts.content, posts.photo, posts.user_id, name Writer, posts.created_at  FROM posts JOIN users u ON user_id = u.id  WHERE posts.deleted_at is NULL AND user_id = ?", userID).Scan(&myPosts).Error
 	if err != nil {
@@ -87,6 +86,7 @@ func (pd *postData) MyPosts(userID uint) ([]post.MyPostsResp, error) {
 	}
 
 	for i, val := range cnvMyPosts {
+		comments := []comment.Core{}
 		pd.db.Raw("SELECT c.id, user_id, name UserName, post_id, c.created_at, content FROM comments c JOIN users u ON c.user_id = u.id WHERE c.deleted_at IS NULL AND post_id = ?", val.ID).Scan(&comments)
 		cnvMyPosts[i].Comments = append(val.Comments, comments...)
 	}
@@ -97,7 +97,6 @@ func (pd *postData) MyPosts(userID uint) ([]post.MyPostsResp, error) {
 func (pd *postData) AllPosts() ([]post.MyPostsResp, error) {
 	allPosts := []post.Core{}
 	cnvAllPosts := []post.MyPostsResp{}
-	comments := []comment.Core{}
 
 	err := pd.db.Raw("SELECT posts.id, posts.content, posts.photo, posts.user_id, name Writer, posts.created_at FROM posts JOIN users u ON user_id = u.id  WHERE posts.deleted_at is NULL").Scan(&allPosts).Error
 	if err != nil {
@@ -111,6 +110,7 @@ func (pd *postData) AllPosts() ([]post.MyPostsResp, error) {
 	}
 
 	for i, val := range cnvAllPosts {
+		comments := []comment.Core{}
 		pd.db.Raw("SELECT c.id, user_id, name UserName, post_id, c.created_at, content FROM comments c JOIN users u ON c.user_id = u.id WHERE c.deleted_at IS NULL AND post_id = ?", val.ID).Scan(&comments)
 		cnvAllPosts[i].Comments = append(val.Comments, comments...)
 	}
