@@ -28,7 +28,8 @@ type CommentService interface {
 }
 
 type CommentData interface {
-	Add(newComment Core) (Core, error)
+	Add(userId uint, newComment Core) (Core, error)
+
 	Update(userId uint, commentId uint, postId uint, updComment Core) (Core, error)
 	Delete(userId, postId, commentId uint) error
 }
