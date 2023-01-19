@@ -2,7 +2,7 @@
 # Social Media Apps
 
 Social Media Apps is an application that used to share story, 
-article, or photo. A user also can give a comment on other user's post and other several features which shown as below
+article, or photo. A user can also give comments on other user's posts and several other features shown as below
 
 
 
