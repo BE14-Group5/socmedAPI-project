@@ -58,6 +58,8 @@ func main() {
 
 	// e.GET("/comments", commentHdl.GetComments())
 	e.POST("/comments", commentHdl.Add(), middleware.JWT([]byte(config.JWT_KEY)))
+	e.PUT("/comments/:id", commentHdl.Update(), middleware.JWT([]byte(config.JWT_KEY)))
+	e.DELETE("/comments/:id", commentHdl.Delete(), middleware.JWT([]byte(config.JWT_KEY)))
 
 	if err := e.Start(":8000"); err != nil {
 		log.Println(err.Error())
