@@ -13,20 +13,20 @@ type CommentData struct {
 	mock.Mock
 }
 
-// Add provides a mock function with given fields: newComment
-func (_m *CommentData) Add(newComment comment.Core) (comment.Core, error) {
-	ret := _m.Called(newComment)
+// Add provides a mock function with given fields: userId, newComment
+func (_m *CommentData) Add(userId uint, newComment comment.Core) (comment.Core, error) {
+	ret := _m.Called(userId, newComment)
 
 	var r0 comment.Core
-	if rf, ok := ret.Get(0).(func(comment.Core) comment.Core); ok {
-		r0 = rf(newComment)
+	if rf, ok := ret.Get(0).(func(uint, comment.Core) comment.Core); ok {
+		r0 = rf(userId, newComment)
 	} else {
 		r0 = ret.Get(0).(comment.Core)
 	}
 
 	var r1 error
-	if rf, ok := ret.Get(1).(func(comment.Core) error); ok {
-		r1 = rf(newComment)
+	if rf, ok := ret.Get(1).(func(uint, comment.Core) error); ok {
+		r1 = rf(userId, newComment)
 	} else {
 		r1 = ret.Error(1)
 	}
@@ -71,20 +71,20 @@ func (_m *CommentData) GetComments(postId uint) ([]comment.Core, error) {
 	return r0, r1
 }
 
-// Update provides a mock function with given fields: updComment
-func (_m *CommentData) Update(updComment comment.Core) (comment.Core, error) {
-	ret := _m.Called(updComment)
+// Update provides a mock function with given fields: userId, commentId, postId, updComment
+func (_m *CommentData) Update(userId uint, commentId uint, postId uint, updComment comment.Core) (comment.Core, error) {
+	ret := _m.Called(userId, commentId, postId, updComment)
 
 	var r0 comment.Core
-	if rf, ok := ret.Get(0).(func(comment.Core) comment.Core); ok {
-		r0 = rf(updComment)
+	if rf, ok := ret.Get(0).(func(uint, uint, uint, comment.Core) comment.Core); ok {
+		r0 = rf(userId, commentId, postId, updComment)
 	} else {
 		r0 = ret.Get(0).(comment.Core)
 	}
 
 	var r1 error
-	if rf, ok := ret.Get(1).(func(comment.Core) error); ok {
-		r1 = rf(updComment)
+	if rf, ok := ret.Get(1).(func(uint, uint, uint, comment.Core) error); ok {
+		r1 = rf(userId, commentId, postId, updComment)
 	} else {
 		r1 = ret.Error(1)
 	}

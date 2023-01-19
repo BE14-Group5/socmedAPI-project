@@ -71,20 +71,20 @@ func (_m *CommentService) GetComments(postId uint) ([]comment.Core, error) {
 	return r0, r1
 }
 
-// Update provides a mock function with given fields: token, updComment, postId, commentId
-func (_m *CommentService) Update(token interface{}, updComment comment.Core, postId uint, commentId uint) (comment.Core, error) {
-	ret := _m.Called(token, updComment, postId, commentId)
+// Update provides a mock function with given fields: token, commentId, postId, updComment
+func (_m *CommentService) Update(token interface{}, commentId uint, postId uint, updComment comment.Core) (comment.Core, error) {
+	ret := _m.Called(token, commentId, postId, updComment)
 
 	var r0 comment.Core
-	if rf, ok := ret.Get(0).(func(interface{}, comment.Core, uint, uint) comment.Core); ok {
-		r0 = rf(token, updComment, postId, commentId)
+	if rf, ok := ret.Get(0).(func(interface{}, uint, uint, comment.Core) comment.Core); ok {
+		r0 = rf(token, commentId, postId, updComment)
 	} else {
 		r0 = ret.Get(0).(comment.Core)
 	}
 
 	var r1 error
-	if rf, ok := ret.Get(1).(func(interface{}, comment.Core, uint, uint) error); ok {
-		r1 = rf(token, updComment, postId, commentId)
+	if rf, ok := ret.Get(1).(func(interface{}, uint, uint, comment.Core) error); ok {
+		r1 = rf(token, commentId, postId, updComment)
 	} else {
 		r1 = ret.Error(1)
 	}

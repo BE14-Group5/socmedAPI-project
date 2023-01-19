@@ -28,9 +28,8 @@ func (cs *commentSrv) Add(token interface{}, newComment comment.Core) (comment.C
 		log.Println("error extract token add comment")
 		return comment.Core{}, errors.New("user not found")
 	}
-	newComment.UserId = uint(userId)
 
-	res, err := cs.qry.Add(newComment)
+	res, err := cs.qry.Add(uint(userId), newComment)
 	if err != nil {
 		errmsg := ""
 		if strings.Contains(err.Error(), "not found") {
