@@ -41,21 +41,6 @@ func (cs *commentSrv) Add(token interface{}, newComment comment.Core) (comment.C
 	}
 	return res, nil
 }
-func (cs *commentSrv) GetComments(postId uint) ([]comment.Core, error) {
-	res, err := cs.qry.GetComments(postId)
-	if err != nil {
-		errmsg := ""
-		if strings.Contains(err.Error(), "empty") {
-			errmsg = "empty comment"
-		} else {
-			errmsg = "server problem"
-		}
-		log.Println("error calling GetComments Data: ", err.Error())
-		return nil, errors.New(errmsg)
-	}
-	return res, nil
-}
-
 func (cs *commentSrv) Update(token interface{}, commentId uint, postId uint, updComment comment.Core) (comment.Core, error) {
 	userId := helper.ExtractToken(token)
 	if userId <= 0 {

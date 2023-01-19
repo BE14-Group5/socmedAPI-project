@@ -43,26 +43,6 @@ func (ch *commentHandle) Add() echo.HandlerFunc {
 		})
 	}
 }
-func (ch *commentHandle) GetComments() echo.HandlerFunc {
-	return func(c echo.Context) error {
-		input := AddCommentReq{}
-		if err := c.Bind(&input); err != nil {
-			return c.JSON(http.StatusBadRequest, "wrong input format")
-		}
-		res, err := ch.srv.GetComments(input.PostId)
-		if err != nil {
-			if strings.Contains(err.Error(), "empty") {
-				return c.JSON(http.StatusNotFound, helper.ErrorResponse("no comment found"))
-			} else {
-				return c.JSON(http.StatusInternalServerError, helper.ErrorResponse("server problem"))
-			}
-		}
-		return c.JSON(http.StatusOK, map[string]interface{}{
-			"data":    res,
-			"message": "success get comments",
-		})
-	}
-}
 func (ch *commentHandle) Update() echo.HandlerFunc {
 	return func(c echo.Context) error {
 		token := c.Get("user")

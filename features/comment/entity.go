@@ -17,21 +17,19 @@ type Core struct {
 
 type CommentHandler interface {
 	Add() echo.HandlerFunc
-	GetComments() echo.HandlerFunc
 	Update() echo.HandlerFunc
 	Delete() echo.HandlerFunc
 }
 
 type CommentService interface {
 	Add(token interface{}, newComment Core) (Core, error)
-	GetComments(postId uint) ([]Core, error)
 	Update(token interface{}, commentId uint, postId uint, updComment Core) (Core, error)
 	Delete(token interface{}, postId, commentId uint) error
 }
 
 type CommentData interface {
 	Add(userId uint, newComment Core) (Core, error)
-	GetComments(postId uint) ([]Core, error)
+
 	Update(userId uint, commentId uint, postId uint, updComment Core) (Core, error)
 	Delete(userId, postId, commentId uint) error
 }
