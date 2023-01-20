@@ -10,7 +10,7 @@ info:
     email: putra123@gmail.com
   version: 1.0.0
 servers:
-  - url: webisteku.com
+  - url: bluepath.my.id
     description: digunakan untuk ujicoba
      
 tags:
@@ -19,7 +19,7 @@ tags:
   - name: Comments
 
 paths:
-  /registration:
+  /register:
     post:
       tags:
         - "Users"
