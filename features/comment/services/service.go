@@ -60,13 +60,13 @@ func (cs *commentSrv) Update(token interface{}, commentId uint, postId uint, upd
 
 	return res, nil
 }
-func (cs *commentSrv) Delete(token interface{}, postId, commentId uint) error {
+func (cs *commentSrv) Delete(token interface{}, commentId uint) error {
 	userId := helper.ExtractToken(token)
 	if userId <= 0 {
 		return errors.New("user not found")
 	}
 
-	if err := cs.qry.Delete(uint(userId), postId, commentId); err != nil {
+	if err := cs.qry.Delete(uint(userId), commentId); err != nil {
 		msg := ""
 		if strings.Contains(err.Error(), "not found") {
 			msg = "comment not found"

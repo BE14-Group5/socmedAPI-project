@@ -196,10 +196,9 @@ func TestDelete(t *testing.T) {
 	repo := mocks.NewCommentData(t)
 
 	t.Run("success delete comment", func(t *testing.T) {
-		postID := uint(3)
 		userID := uint(2)
 		commentID := uint(1)
-		repo.On("Delete", userID, postID, commentID).Return(nil).Once()
+		repo.On("Delete", userID, commentID).Return(nil).Once()
 
 		srv := New(repo)
 
@@ -208,17 +207,16 @@ func TestDelete(t *testing.T) {
 		pToken := token.(*jwt.Token)
 		pToken.Valid = true
 
-		err := srv.Delete(pToken, postID, commentID)
+		err := srv.Delete(pToken, commentID)
 		assert.Nil(t, err)
 		repo.AssertExpectations(t)
 
 	})
 
 	t.Run("data not found", func(t *testing.T) {
-		postID := uint(3)
 		userID := uint(2)
 		commentID := uint(1)
-		repo.On("Delete", userID, postID, commentID).Return(errors.New("data not found")).Once()
+		repo.On("Delete", userID, commentID).Return(errors.New("data not found")).Once()
 
 		srv := New(repo)
 
@@ -227,17 +225,16 @@ func TestDelete(t *testing.T) {
 		pToken := token.(*jwt.Token)
 		pToken.Valid = true
 
-		err := srv.Delete(pToken, postID, commentID)
+		err := srv.Delete(pToken, commentID)
 		assert.NotNil(t, err)
 		assert.ErrorContains(t, err, "not found")
 		repo.AssertExpectations(t)
 	})
 
 	t.Run("server problem", func(t *testing.T) {
-		postID := uint(3)
 		userID := uint(2)
 		commentID := uint(1)
-		repo.On("Delete", userID, postID, commentID).Return(errors.New("server problem")).Once()
+		repo.On("Delete", userID, commentID).Return(errors.New("server problem")).Once()
 
 		srv := New(repo)
 
@@ -246,14 +243,13 @@ func TestDelete(t *testing.T) {
 		pToken := token.(*jwt.Token)
 		pToken.Valid = true
 
-		err := srv.Delete(pToken, postID, commentID)
+		err := srv.Delete(pToken, commentID)
 		assert.NotNil(t, err)
 		assert.ErrorContains(t, err, "server")
 		repo.AssertExpectations(t)
 	})
 
 	t.Run("jwt not valid", func(t *testing.T) {
-		postID := uint(3)
 		commentID := uint(1)
 
 		srv := New(repo)
@@ -263,7 +259,7 @@ func TestDelete(t *testing.T) {
 		pToken := token.(*jwt.Token)
 		pToken.Valid = true
 
-		err := srv.Delete(pToken, postID, commentID)
+		err := srv.Delete(pToken, commentID)
 		assert.NotNil(t, err)
 		repo.AssertExpectations(t)
 	})

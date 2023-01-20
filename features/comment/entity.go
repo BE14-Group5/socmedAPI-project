@@ -24,12 +24,12 @@ type CommentHandler interface {
 type CommentService interface {
 	Add(token interface{}, newComment Core) (Core, error)
 	Update(token interface{}, commentId uint, postId uint, updComment Core) (Core, error)
-	Delete(token interface{}, postId, commentId uint) error
+	Delete(token interface{}, commentId uint) error
 }
 
 type CommentData interface {
 	Add(userId uint, newComment Core) (Core, error)
 
 	Update(userId uint, commentId uint, postId uint, updComment Core) (Core, error)
-	Delete(userId, postId, commentId uint) error
+	Delete(userId, commentId uint) error
 }

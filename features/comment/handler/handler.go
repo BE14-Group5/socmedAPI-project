@@ -84,15 +84,7 @@ func (ch *commentHandle) Delete() echo.HandlerFunc {
 			return c.JSON(http.StatusBadRequest, "wrong ID comment")
 		}
 
-		input := DeleteCommentReq{}
-		err2 := c.Bind(&input)
-		if err2 != nil {
-			log.Println("delete comment body scan error")
-			return c.JSON(http.StatusBadRequest, "wrong input format")
-		}
-
-		postID := input.PostId
-		error := ch.srv.Delete(token, postID, uint(cnv))
+		error := ch.srv.Delete(token, uint(cnv))
 		if error != nil {
 			log.Println("error running delete comment service")
 			return c.JSON(http.StatusInternalServerError, helper.ErrorResponse("server problem"))

@@ -60,8 +60,8 @@ func (cd *commentData) Update(userId uint, commentId uint, postId uint, updComme
 
 	return ToCore(updt), nil
 }
-func (cd *commentData) Delete(userId, postId, commentId uint) error {
-	qry := cd.db.Where("user_id = ? AND post_id = ?", userId, postId).Delete(&Comment{}, commentId)
+func (cd *commentData) Delete(userId, commentId uint) error {
+	qry := cd.db.Where("user_id = ?", userId).Delete(&Comment{}, commentId)
 
 	if qry.RowsAffected <= 0 {
 		log.Println("no rows affected")

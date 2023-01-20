@@ -34,41 +34,18 @@ func (_m *CommentData) Add(userId uint, newComment comment.Core) (comment.Core, 
 	return r0, r1
 }
 
-// Delete provides a mock function with given fields: userId, postId, commentId
-func (_m *CommentData) Delete(userId uint, postId uint, commentId uint) error {
-	ret := _m.Called(userId, postId, commentId)
+// Delete provides a mock function with given fields: userId, commentId
+func (_m *CommentData) Delete(userId uint, commentId uint) error {
+	ret := _m.Called(userId, commentId)
 
 	var r0 error
-	if rf, ok := ret.Get(0).(func(uint, uint, uint) error); ok {
-		r0 = rf(userId, postId, commentId)
+	if rf, ok := ret.Get(0).(func(uint, uint) error); ok {
+		r0 = rf(userId, commentId)
 	} else {
 		r0 = ret.Error(0)
 	}
 
 	return r0
-}
-
-// GetComments provides a mock function with given fields: postId
-func (_m *CommentData) GetComments(postId uint) ([]comment.Core, error) {
-	ret := _m.Called(postId)
-
-	var r0 []comment.Core
-	if rf, ok := ret.Get(0).(func(uint) []comment.Core); ok {
-		r0 = rf(postId)
-	} else {
-		if ret.Get(0) != nil {
-			r0 = ret.Get(0).([]comment.Core)
-		}
-	}
-
-	var r1 error
-	if rf, ok := ret.Get(1).(func(uint) error); ok {
-		r1 = rf(postId)
-	} else {
-		r1 = ret.Error(1)
-	}
-
-	return r0, r1
 }
 
 // Update provides a mock function with given fields: userId, commentId, postId, updComment
